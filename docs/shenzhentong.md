@@ -28,3 +28,7 @@ card_validity: "2021-11-17",
 current_time: "2014-10-19 21:39:31"
 }
 ```
+
+演示：
+
+[http://api.oupag.com/dev/api/shenzhentong.php?cardno=328375558](http://api.oupag.com/dev/api/shenzhentong.php?cardno=328375558)
