@@ -1,6 +1,6 @@
 <?php
 /**
- * shenzhentong.php
+ * myclass.php
  * dev的基础类库
  * Autuor: Skiychan
  * Contact: developer@zzzzy.com & QQ:1005043848

@@ -14,6 +14,7 @@
 
 接口信息
 URL：http://query.shenzhentong.com:8080/sztnet/qryCard.do
+     http://query.shenzhentong.com:8080/sztnet/qryCard.do?cardno=328375558
 POST方法：cardno:328375558
 
 ### 返回字段 json格式
@@ -34,8 +35,11 @@ current_time  | string  | 查询时间
     $cardno = isset($_GET["cardno"]) ? $_GET["cardno"] : 0;
     $post_cardno = "cardno={$cardno}";
     $data = new Myclass();
-    $page = $data->curls("http://query.shenzhentong.com:8080/sztnet/qryCard.do", false, $post_cardno);
 
+    //curl 的POST方式
+    //$page = $data->curls("http://query.shenzhentong.com:8080/sztnet/qryCard.do", false, $post_cardno);
+    //直接GET方式
+    $page = $data->curls("http://query.shenzhentong.com:8080/sztnet/qryCard.do?cardno={$cardno}");
     $page = $data->pageToDom($page, "GBK");
 
     $tr = $page->query("//table[@class='tableact']/tr/td");
