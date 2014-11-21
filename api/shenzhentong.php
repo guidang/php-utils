@@ -32,7 +32,7 @@ current_time  | string  | 查询时间
 
     date_default_timezone_set("Asia/Shanghai");
 
-    $cardno = isset($_GET["cardno"]) ? $_GET["cardno"] : 0;
+    $cardno = isset($_GET["cardno"]) ? $_GET["cardno"] : die("Please enter cardno!");
     $post_cardno = "cardno={$cardno}";
     $data = new Myclass();
 
