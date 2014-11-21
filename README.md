@@ -1,16 +1,17 @@
-ÕâÊÇÎÒĞ´µÄÒ»Ğ©API¡£
+è¿™æ˜¯æˆ‘å†™çš„ä¸€äº›APIã€‚
 
 ==================
-### APIÏîÄ¿
-1. [ÉîÛÚÍ¨Óà¶î²éÑ¯](docs/shenzhentong.md), [project](api/shenzhentong.php)
+### APIé¡¹ç›®
+1. [æ·±åœ³é€šä½™é¢æŸ¥è¯¢](docs/shenzhentong.md), [project](api/shenzhentong.php)
 
-> [ÑİÊ¾]:(http://api.oupag.com/dev/api/shenzhentong.php?cardno=328375558)
+> [æ¼”ç¤º]:(http://api.oupag.com/dev/api/shenzhentong.php?cardno=328375558)
 
-2. [ÉîÛÚ°ìÀí³ö¾³Í¨ĞĞÖ¤Ô¤Ô¼²éÑ¯](docs/tongxingzhengyuyue.php), [project](api/tongxingzhengyuyue.php) 
+2. [æ·±åœ³åŠç†å‡ºå¢ƒé€šè¡Œè¯é¢„çº¦æŸ¥è¯¢](docs/tongxingzhengyuyue.php), [project](api/tongxingzhengyuyue.php) 
 
 ======
-### ÁªÏµ·½Ê½
+### è”ç³»æ–¹å¼
 Email: Developer@zzzzy.com  
 Website: [www.oupag.com](http://www.oupag.com)   
 Wechat: keaty69030   
-Weibo: [@·èĞ¡³Â](http://weibo.com/ckiy)
+Weibo: [@ç–¯å°é™ˆ](http://weibo.com/ckiy)
+
