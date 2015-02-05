@@ -59,6 +59,7 @@ current_time  | string  | 查询时间
         "card_validity" =>  getTextContent($tr, 5),
         "current_time" => date("Y-m-d H:i:s", time()));
 
+    header('Content-Type: text/json; charset=utf-8');
     echo json_encode($results);
 
 ?>
