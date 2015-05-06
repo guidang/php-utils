@@ -10,8 +10,8 @@
 
 ======
 ### 联系方式
-Email: Developer@zzzzy.com  
-Website: [www.oupag.com](http://www.oupag.com)   
-Wechat: keaty69030   
-Weibo: [@疯小陈](http://weibo.com/ckiy)
+@author: Skiychan <developer@zzzzzy.com>
+@website: [Skiy Studio](www.skiy.net)
+@QQ: 1005043848 QQ群:20625469
+
 

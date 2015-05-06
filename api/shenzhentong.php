@@ -1,4 +1,4 @@
-<?php
+<php
 /**
  * shenzhentong.php
  * 深圳通的API
@@ -60,6 +60,11 @@ current_time  | string  | 查询时间
         "current_time" => date("Y-m-d H:i:s", time()));
 
     header('Content-Type: text/json; charset=utf-8');
+    
+    if (! isset($results['card_balance'])) {
+	echo json_encode(array("code" => 200, "msg" => "信息获取失败，请稍后重试"));
+    die();
+    }
     echo json_encode($results);
 
 ?>
