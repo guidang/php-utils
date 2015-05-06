@@ -61,9 +61,9 @@ current_time  | string  | 查询时间
 
     header('Content-Type: text/json; charset=utf-8');
     
-    if (! isset($results['card_balance'])) {
-	echo json_encode(array("code" => 200, "msg" => "信息获取失败，请稍后重试"));
-    die();
+    if (empty($results['card_balance'])) {
+		echo json_encode(array("code" => 200, "msg" => "信息获取失败，请稍后重试"));
+	    die();
     }
     echo json_encode($results);
 
