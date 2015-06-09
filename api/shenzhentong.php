@@ -1,4 +1,4 @@
-<php
+<?php
 /**
  * shenzhentong.php
  * 深圳通的API
@@ -54,10 +54,11 @@ current_time  | string  | 查询时间
 
     $results = array(
         "card_number" =>  (int) getTextContent($tr, 1),
-        "card_balance" =>  getTextContent($tr, 3),
-        "balance_time" => $expires[1],
-        "card_validity" =>  getTextContent($tr, 5),
-        "current_time" => date("Y-m-d H:i:s", time()));
+        "card_balance" =>  str_replace("元","",getTextContent($tr, 3)),
+        "balance_time" => strtotime($expires[1]),
+        "card_validity" =>  strtotime(getTextContent($tr, 5)),
+        "current_time" => time()
+        );
 
     header('Content-Type: text/json; charset=utf-8');
     
