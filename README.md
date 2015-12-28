@@ -10,8 +10,8 @@
 
 ======
 ### 联系方式
-@author: Skiychan <developer@zzzzzy.com>   
-@website: [Skiy Studio](www.skiy.net)   
-@QQ: 1005043848 QQ群:20625469   
+Author: Skiychan    
+Email:  dev@skiy.net    
+Link:   www.zzzzy.com   
 
 
