@@ -7,11 +7,13 @@
 > [演示]:(http://api.oupag.com/dev/api/shenzhentong.php?cardno=328375558)
 
 2. [深圳办理出境通行证预约查询](docs/tongxingzhengyuyue.md), [project](api/tongxingzhengyuyue.php) 
+   
+3. 只有100多行PHP代码的七牛云离线下载, [project](api/qiniu.php)    
 
 ======
 ### 联系方式
 Author: Skiychan    
-Email:  dev@skiy.net    
-Link:   www.zzzzy.com   
+Email : dev@skiy.net    
+Link  : https://www.zzzzy.com   
 
 
