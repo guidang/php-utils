@@ -1,13 +1,13 @@
 <?php
 /**
- * shenzhentong.php
  * 深圳通的API
- * @autuor: Skiychan
- * @contact: developer@zzzzy.com & QQ:1005043848
- * @website: www.zzzzy.com & http://weibo.com/ckiy
- * @date: 2014-10-19
- * @readme https://github.com/skiy/dev/blob/master/docs/shenzhentong.md
- */
+ * shenzhentong.php
+ * @author  : Skiychan <dev@skiy.net>
+ * @link    : https://www.zzzzy.com
+ * @created : 10/19/14
+ * @modified:
+ * @version : 0.0.1
+ * @doc     : https://www.zzzzy.com/201410193345.html
 
 /**
 链接：http://query.shenzhentong.com:8080/sztnet/qrycard.jsp
