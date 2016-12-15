@@ -1,15 +1,20 @@
 <?php
 /**
  * 七牛云离线下载
- * qiniu.php
- * @author  : Skiychan <dev@skiy.net>
- * @link    : https://www.zzzzy.com
- * @created : 5/8/16
- * @modified:
- * @version : 0.0.1
- * @doc     : https://www.zzzzy.com/201605084032.html
- * 用了点 PHP7的新特征：?? 和 PHP5高版本的 [] 代替 array()，可自行修改
+ * File:   qiniu.php
+ * Author: Skiychan <dev@skiy.net>
+ * Created: 2016-5-8
+ * Updated: 2016-12-15
+ * Link: https://www.zzzzy.com
+ * Url: https://www.zzzzy.com/201605084032.html
  */
+
+//七牛云配置，请到七牛云上面申请帐号并填写密钥和bucket
+define("AccessKey", "AccessKey_12345689");
+define("SecretKey", "SecretKey_98764231");
+define("BUCKET", "Your bucket");
+define("HOST", "http://iovip.qbox.me");
+define("DOMAIN", "Your domain");
 
 $thisPage = basename($_SERVER['PHP_SELF']);
 
@@ -43,8 +48,7 @@ if (empty($_POST)) {
     die;
 }
 
-$url = $_POST['url'] ?? "";  //PHP7
-//$url = isset($_POST['url']) ? $_POST['url'] : "";  //PHP5
+$url = isset($_POST['url']) ? $_POST['url'] : "";  //PHP5
 
 if (empty($url)) {
     header("Location: ".$thisPage);
@@ -59,13 +63,6 @@ function urlsafe_base64_encode($data) {
 function hmac_sha1($str, $key) {
     return hash_hmac("sha1", $str, $key, true);
 }
-
-//七牛云配置，请到七牛云上面申请帐号并填写密钥和bucket
-define("AccessKey", "AccessKey_12345689");
-define("SecretKey", "SecretKey_98764231");
-define("BUCKET", "Your bucket");
-define("HOST", "http://iovip.qbox.me");
-define("DOMAIN", "Your domain");
 
 $uploadFormat = "%s/fetch/%s/to/%s";
 $encodeURI = urlsafe_base64_encode($url);

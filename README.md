@@ -1,13 +1,15 @@
-## API for PHP
-这是我写的一些PHP 版本的 API。
+## DEV for PHP
+基于PHP语言的API或者工具。
 
 ======
 ### API项目
-- [深圳通余额查询](docs/shenzhentong.md), [project](api/shenzhentong.php)
+- [深圳通余额查询](docs/shenzhentong.md), [project](apis/shenzhentong.php)
 
 > [演示](http://api.oupag.com/dev/api/shenzhentong.php?cardno=328375558)
    
-- 只有100多行PHP代码的七牛云离线下载, [project](api/qiniu.php)    
+- 只有100多行PHP代码的七牛云离线下载, [project](files/qiniu.php)    
+
+- [JSON格式数据 转POSTMAN BulkEdit格式数据](docs/json2bulkedit.md), [project](files/json2bulkedit.php)    
 
 ======
 ### Author

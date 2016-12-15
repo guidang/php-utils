@@ -1,13 +1,12 @@
 <?php
 /**
  * 深圳通的API
- * shenzhentong.php
- * @author  : Skiychan <dev@skiy.net>
- * @link    : https://www.zzzzy.com
- * @created : 10/19/14
- * @modified:
- * @version : 0.0.1
- * @doc     : https://www.zzzzy.com/201410193345.html
+ * File:   shenzhentong.php
+ * Author: Skiychan <dev@skiy.net>
+ * Created: 2016-10-19
+ * Updated: 2016-12-15
+ * Link: https://www.zzzzy.com
+ * Url: https://www.zzzzy.com/201410193345.html
 
 /**
 链接：http://query.shenzhentong.com:8080/sztnet/qrycard.jsp
@@ -28,19 +27,18 @@ current_time  | string  | 查询时间
 
  */
 
-    require_once "../libs/myclass.php";
+    require dirname(__DIR__)."/libraries/common.php";
 
     date_default_timezone_set("Asia/Shanghai");
 
     $cardno = isset($_GET["cardno"]) ? $_GET["cardno"] : die("Please enter cardno!");
     $post_cardno = "cardno={$cardno}";
-    $data = new Myclass();
 
     //curl 的POST方式
-    //$page = $data->curls("http://query.shenzhentong.com:8080/sztnet/qryCard.do", false, $post_cardno);
+    //$page = Common::curls("http://query.shenzhentong.com:8080/sztnet/qryCard.do", false, $post_cardno);
     //直接GET方式
-    $page = $data->curls("http://query.shenzhentong.com:8080/sztnet/qryCard.do?cardno={$cardno}");
-    $page = $data->pageToDom($page, "GBK");
+    $page = Common::curls("http://query.shenzhentong.com:8080/sztnet/qryCard.do?cardno={$cardno}");
+    $page = Common::pageToDom($page, "GBK");
 
     $tr = $page->query("//table[@class='tableact']/tr/td");
 
@@ -59,14 +57,12 @@ current_time  | string  | 查询时间
         "card_validity" =>  strtotime(getTextContent($tr, 5)),
         "current_time" => time()
         );
-
-    header('Content-Type: text/json; charset=utf-8');
+		
+    header('Content-Type: application/json; charset=utf-8');		
     
     if (empty($results['card_balance'])) {
 		echo json_encode(array("code" => 200, "msg" => "信息获取失败，请稍后重试"));
 	    die();
     }
     echo json_encode($results);
-
-?>
  
