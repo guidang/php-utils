@@ -1,0 +1,17 @@
+#!/usr/bin/expect
+
+set download_url [lindex ${argv} 0]
+set time_out [lindex ${argv} 1]
+set filename [lindex ${argv} 2]
+
+set basepath "/data/wwwroot/dl.mmapp.cc/"
+
+if { $filename == "0" } {
+	set file "-P${basepath}files/"   
+} else {
+	set file "-O${basepath}files/${filename}"
+}
+
+spawn wget -t ${time_out} ${file} ${download_url}
+
+expect eof
