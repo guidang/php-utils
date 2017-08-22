@@ -14,6 +14,7 @@
 - [JSON格式数据 转 Array格式数据](docs/json2bulkedit.md), [project](files/json2array.php)  
 - [JSON格式数据 转 POSTMAN BulkEdit格式数据](docs/json2bulkedit.md), [project](files/json2bulkedit.php)  
 - [JSON格式数据 转 xml格式数据](docs/json2bulkedit.md), [project](files/json2xml.php)  
+- [TEXT格式数据 转 Array格式数据](docs/text2array.md), [project](files/text2array.php)  
 
 - 利用VPS离线下载文件, [project](files/dl/) 
 ======
