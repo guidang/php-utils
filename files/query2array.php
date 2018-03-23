@@ -1,7 +1,7 @@
 <?php
 
 /**
- * TEXT 格式转数组
+ * Query 格式转数组
  */
  
 $content = isset($_POST['content']) ? $_POST['content'] : '';
@@ -14,16 +14,14 @@ if (! empty($content)) {
 	} else {
 		$error = 2;
 		//var_dump($content);
-		$data_arr = explode("\r\n", $content);
-		//var_export($data_arr);
-		$bulk_data = $data_arr;
+		parse_str($content, $bulk_data);
 	}
 }
 ?>
 <!doctype html>
 <html>
 <head>
-<title>TEXT格式数据 转 Array数组格式</title>
+<title>Query 格式数据 转 Array数组格式</title>
 <style>
 label,
 button {
@@ -42,7 +40,7 @@ button {
 <body>
 <div class='container'> 
 	<form method='POST'>
-	<label for='content'>TEXT格式数据</label>
+	<label for='content'>Query格式数据</label>
 	<textarea name='content' cols='80' rows='5' required><?php echo $content; ?></textarea>
 	<button>提交</button>
 	</form> 
@@ -52,9 +50,8 @@ button {
 		<pre><?php var_export($bulk_data); ?></pre>
 	<div>
 	<?php } else if ($error == 1) { ?>
-	<div class='tips'>TEXT数据格式有误</div>
+	<div class='tips'>Query 数据格式有误</div>
 	<?php } ?>
 </div>
 </body>
 <html>
- 

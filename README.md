@@ -11,11 +11,13 @@
 - 只有100多行PHP代码的七牛云离线下载, [project](files/qiniu.php)    
 
 - [Array 转 Json格式数据](docs/array2json.md), [project](files/array2json.php)    
+- [Array 转 POSTMAN BulkEdit格式数据](docs/array2bulkedit.md), [project](files/array2bulkedit.php)   
 - [JSON格式数据 转 Array格式数据](docs/json2array.md), [project](files/json2array.php)  
 - [JSON格式数据 转 POSTMAN BulkEdit格式数据](docs/json2bulkedit.md), [project](files/json2bulkedit.php)  
 - [JSON格式数据 转 xml格式数据](docs/json2xml.md), [project](files/json2xml.php)  
 - [TEXT格式数据 转 Array格式数据](docs/text2array.md), [project](files/text2array.php)  
-- [XML格式数据 转 Array格式数据](docs/xml2array.md), [project](files/xml2array.php) 
+- [XML格式数据 转 Array格式数据](docs/text2array.md), [project](files/xml2array.php) 
+- [XML格式数据 转 Array格式数据](docs/query2array.md), [project](files/query2array.php)    
 
 - 利用VPS离线下载文件, [project](files/dl/)    
 ------
