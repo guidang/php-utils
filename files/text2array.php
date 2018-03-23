@@ -43,7 +43,9 @@ button {
 <div class='container'> 
 	<form method='POST'>
 	<label for='content'>TEXT格式数据</label>
-	<textarea name='content' cols='80' rows='5' required><?php echo $content; ?></textarea>
+	<textarea name='content' cols='80' rows='5' placeholder="aaaa
+bbbb
+cccc" required><?php echo $content; ?></textarea>
 	<button>提交</button>
 	</form> 
 	<?php if ($error == 2) {?>

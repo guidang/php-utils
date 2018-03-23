@@ -52,7 +52,7 @@ button {
 	<div>
 		<h4>BulkEdit格式数据</h4>
 		<pre><?php echo $bulk_data; ?></pre>
-	<div>
+	</div>
 	<?php } else if ($error == 1) { ?>
 	<div class='tips'>JSON数据格式有误</div>
 	<?php } ?>

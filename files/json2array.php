@@ -5,7 +5,6 @@
  */
  
 $content = isset($_POST['content']) ? $_POST['content'] : '';
-$bulk_data = '';
 $error = 0;
 
 if (! empty($content)) {
@@ -14,9 +13,6 @@ if (! empty($content)) {
 		$error = 1;
 	} else {
 		$error = 2;
-		$data_str = '';
-		var_export($arr);
-		$bulk_data = $data_str;
 	}
 }
 ?>
@@ -49,8 +45,8 @@ button {
 	<?php if ($error == 2) {?>
 	<div>
 		<h4>Array数组格式</h4>
-		<pre><?php echo $bulk_data; ?></pre>
-	<div>
+		<pre><?php var_export($arr); ?></pre>
+	</div>
 	<?php } else if ($error == 1) { ?>
 	<div class='tips'>JSON数据格式有误</div>
 	<?php } ?>

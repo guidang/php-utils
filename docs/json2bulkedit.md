@@ -1,12 +1,12 @@
-## JSON¸ñÊ½Êı¾İ ×ªPOSTMAN BulkEdit¸ñÊ½Êı¾İ
+## JSONæ ¼å¼æ•°æ® è½¬ POSTMAN Bulk Edit
 
 ====
-### JSON¸ñÊ½Êı¾İ
+### JSONæ ¼å¼æ•°æ®
 ```
 {"key1":"value1","key2":"value2","key3":"value3"}
 ```
 
-### BulkEdit¸ñÊ½Êı¾İ
+### POSTMAN Bulk Edit
 ```
 key1:value1
 key2:value2

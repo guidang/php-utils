@@ -5,7 +5,7 @@
  */
  
 $content = isset($_POST['content']) ? $_POST['content'] : '';
-$bulk_data = '';
+$xml_data = '';
 $error = 0;
 
 if (! empty($content)) {
@@ -15,62 +15,13 @@ if (! empty($content)) {
 	} else {
 		$error = 2;
 		
-		class Exporter
-		{
-			private $root = 'document';
-			private $indentation = '    ';
-			// TODO: private $this->addtypes = false; // type="string|int|float|array|null|bool"
-			public function export($data)
-			{
-				$data = array($this->root => $data);
-				return '<?xml version="1.0" encoding="UTF-8"?>' . $this->recurse($data, 0) . PHP_EOL;
-			}
-			private function recurse($data, $level)
-			{
-				$str = '';
-				$indent = str_repeat($this->indentation, $level);
-				foreach ($data as $key => $value) {
-					$str .= PHP_EOL . $indent . '<' . $key;
-					if ($value === null) {
-						$str .= ' />';
-					} else {
-						$str .= '>';
-						if (is_array($value)) {
-							if ($value) {
-								//$temporary = $this->getArrayName($key);
-								foreach ($value as $k => $entry) {
-									$str .= $this->recurse(array($k => $entry), $level + 1);
-								}
-								$str .= PHP_EOL . $indent;
-							}
-						} else if (is_object($value)) {
-							if ($value) {
-								$str .= $this->recurse($value, $level + 1);
-								$str .= PHP_EOL . $indent;
-							}
-						} else {
-							if (is_bool($value)) {
-								$value = $value ? 'true' : 'false';
-							}
-							$str .= $this->escape($value);
-						}
-						$str .= '</' . $key . '>';
-					}
-				}
-				
-				return $str;
-			}
-			private function escape($value)
-			{
-				// TODO:
-				return $value;
-			}
-			private function getArrayName($parentName)
-			{
-				// TODO: special namding for tag names within arrays
-				return $parentName;
-			}
-		}
+		$xml_arr = array();
+        foreach ($obj as $key => $value) {
+            $xml_arr[] = "<{$key}>{$value}</{$key}>";
+        }
+
+        $xml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n" . implode("\r\n", $xml_arr) . "\r\n</xml>";
+        $xml_data = htmlspecialchars($xml_data);
 	}
 }
 ?>
@@ -103,8 +54,8 @@ button {
 	<?php if ($error == 2) {?>
 	<div>
 		<h4>XML格式数据</h4>
-		<pre><?php print_r($bulk_data); ?></pre>
-	<div>
+		<pre><?php print_r($xml_data); ?></pre>
+	</div>
 	<?php } else if ($error == 1) { ?>
 	<div class='tips'>JSON数据格式有误</div>
 	<?php } ?>
