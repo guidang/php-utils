@@ -349,3 +349,49 @@ function xml2Array($xml) {
 	$result = json_decode(json_encode(simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA)), true);
 	return $result;
 }
+
+  /**
+     * 建立请求，以表单HTML形式构造（默认）
+     * @param $url 转跳页面
+     * @param $para_temp 请求参数数组
+     * @return 提交表单HTML文本
+     * @return string
+     */
+    function buildRequestForm($url, $para_temp) {
+
+        $sHtml = "<form id='alipaysubmit' name='htmlsubmit' action='".$url."' method='POST'>";
+        foreach ($para_temp as $key => $val) {
+            if (false === checkEmpty($val)) {
+                //$val = $this->characet($val, $this->postCharset);
+                $val = str_replace("'","&apos;",$val);
+                //$val = str_replace("\"","&quot;",$val);
+                $sHtml.= "<input type='hidden' name='".$key."' value='".$val."'/>";
+            }
+        }
+
+        //submit按钮控件请不要含有name属性
+        $sHtml = $sHtml."<input type='submit' value='ok' style='display:none;'></form>";
+
+        $sHtml = $sHtml."<script>document.forms['htmlsubmit'].submit();</script>";
+
+        return $sHtml;
+    }
+
+    /**
+     * 执行转跳页功能
+     * @param $gateway_url 网关
+     * @param $params 参数数组
+     * @param string $httpmethod 请求方法 (默认POST)
+     * @return 提交表单HTML文本|string
+     */
+    function pageExecute($gateway_url, $params, $httpmethod = "POST") {
+        if ("GET" == $httpmethod) {
+            //拼接GET请求串
+            $requestUrl = $gateway_url . "?" . http_build_query($params);
+
+            return $requestUrl;
+        } else {
+            //拼接表单字符串
+            return buildRequestForm($gateway_url, $params);
+        }
+    }
