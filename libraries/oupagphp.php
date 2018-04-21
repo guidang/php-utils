@@ -359,7 +359,7 @@ function xml2Array($xml) {
      */
     function buildRequestForm($url, $para_temp) {
 
-        $sHtml = "<form id='alipaysubmit' name='htmlsubmit' action='".$url."' method='POST'>";
+        $sHtml = "<form id='jssubmit' name='htmlsubmit' action='".$url."' method='POST'>";
         foreach ($para_temp as $key => $val) {
             if (false === checkEmpty($val)) {
                 //$val = $this->characet($val, $this->postCharset);
