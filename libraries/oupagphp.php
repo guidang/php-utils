@@ -350,48 +350,130 @@ function xml2Array($xml) {
 	return $result;
 }
 
-  /**
-     * 建立请求，以表单HTML形式构造（默认）
-     * @param $url 转跳页面
-     * @param $para_temp 请求参数数组
-     * @return 提交表单HTML文本
-     * @return string
-     */
-    function buildRequestForm($url, $para_temp) {
+/**
+ * 建立请求，以表单HTML形式构造（默认）
+ * @param $url 转跳页面
+ * @param $para_temp 请求参数数组
+ * @return 提交表单HTML文本
+ * @return string
+ */
+function buildRequestForm($url, $para_temp) {
 
-        $sHtml = "<form id='jssubmit' name='htmlsubmit' action='".$url."' method='POST'>";
-        foreach ($para_temp as $key => $val) {
-            if (false === checkEmpty($val)) {
-                //$val = $this->characet($val, $this->postCharset);
-                $val = str_replace("'","&apos;",$val);
-                //$val = str_replace("\"","&quot;",$val);
-                $sHtml.= "<input type='hidden' name='".$key."' value='".$val."'/>";
-            }
-        }
+	$sHtml = "<form id='jssubmit' name='htmlsubmit' action='".$url."' method='POST'>";
+	foreach ($para_temp as $key => $val) {
+		if (false === checkEmpty($val)) {
+			//$val = $this->characet($val, $this->postCharset);
+			$val = str_replace("'","&apos;",$val);
+			//$val = str_replace("\"","&quot;",$val);
+			$sHtml.= "<input type='hidden' name='".$key."' value='".$val."'/>";
+		}
+	}
 
-        //submit按钮控件请不要含有name属性
-        $sHtml = $sHtml."<input type='submit' value='ok' style='display:none;'></form>";
+	//submit按钮控件请不要含有name属性
+	$sHtml = $sHtml."<input type='submit' value='ok' style='display:none;'></form>";
 
-        $sHtml = $sHtml."<script>document.forms['htmlsubmit'].submit();</script>";
+	$sHtml = $sHtml."<script>document.forms['htmlsubmit'].submit();</script>";
 
-        return $sHtml;
-    }
+	return $sHtml;
+}
 
-    /**
-     * 执行转跳页功能
-     * @param $gateway_url 网关
-     * @param $params 参数数组
-     * @param string $httpmethod 请求方法 (默认POST)
-     * @return 提交表单HTML文本|string
-     */
-    function pageExecute($gateway_url, $params, $httpmethod = "POST") {
-        if ("GET" == $httpmethod) {
-            //拼接GET请求串
-            $requestUrl = $gateway_url . "?" . http_build_query($params);
+/**
+ * 执行转跳页功能
+ * @param $gateway_url 网关
+ * @param $params 参数数组
+ * @param string $httpmethod 请求方法 (默认POST)
+ * @return 提交表单HTML文本|string
+ */
+function pageExecute($gateway_url, $params, $httpmethod = "POST") {
+	if ("GET" == $httpmethod) {
+		//拼接GET请求串
+		$requestUrl = $gateway_url . "?" . http_build_query($params);
 
-            return $requestUrl;
-        } else {
-            //拼接表单字符串
-            return buildRequestForm($gateway_url, $params);
-        }
-    }
+		return $requestUrl;
+	} else {
+		//拼接表单字符串
+		return buildRequestForm($gateway_url, $params);
+	}
+}
+	
+/**
+ * 生成随机的32位字符串/
+ * @param string $string
+ * @return string
+ */
+function ramdom_md5($string='') {
+	//获取当前时间的微秒
+	list($usec, $sec) = explode(' ', microtime());
+	$microtime = ((float)$usec + (float)$sec);
+	$microtime = str_replace('.','',$microtime);
+
+	//将微秒时间加长一个0-1000的随机变量
+	for ($i = 0; $i < 19; $i++) {
+		$microtime .= rand(0,9);
+	}
+
+	$long_string = $string.$microtime;
+
+	//md5加密后再base64编码
+	$result = sha1(base64_encode(md5($long_string, true)));
+
+	return $result;
+}	
+
+/**
+ * 设置网页格式
+ * @param string $type 格式
+ */
+function page_format($type='html') {
+	$formats = [
+        'json' => 'application/json',
+        'array' => 'application/json',
+        'csv' => 'application/csv',
+        'html' => 'text/html',
+        'jsonp' => 'application/javascript',
+        'php' => 'text/plain',
+        'serialized' => 'application/vnd.php.serialized',
+        'xml' => 'application/xml'
+	];
+	
+	$contentType = $formats[$type] ?: $formats['html'];
+	header('Content-type: ' . $contentType);
+}
+
+/**
+ * 创建随机字符串
+ * @param	string	type of random string.  basic, alpha, alnum, numeric, nozero, unique, md5, encrypt and sha1
+ * @param	int	长度
+ * @return	string
+ */
+function random_string($type = 'alnum', $len = 8) {
+	switch ($type) {
+		case 'basic':
+			return mt_rand();
+		case 'alnum':
+		case 'numeric':
+		case 'nozero':
+		case 'alpha':
+			switch ($type) {
+				case 'alpha':
+					$pool = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+					break;
+				case 'alnum':
+					$pool = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+					break;
+				case 'numeric':
+					$pool = '0123456789';
+					break;
+				case 'nozero':
+					$pool = '123456789';
+					break;
+			}
+			return substr(str_shuffle(str_repeat($pool, ceil($len / strlen($pool)))), 0, $len);
+		case 'unique': // todo: remove in 3.1+
+		case 'md5':
+			return md5(uniqid(mt_rand()));
+		case 'encrypt': // todo: remove in 3.1+
+		case 'sha1':
+			return sha1(uniqid(mt_rand(), true));
+	}
+}
