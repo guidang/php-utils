@@ -1,6 +1,8 @@
 <?php
+
 /**
  * 公共函数
+ * @author: Skiychan <dev@skiy.net>
  */
 
 date_default_timezone_set('Asia/Shanghai'); //'Asia/Shanghai'   亚洲/上海 
