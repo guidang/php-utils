@@ -642,3 +642,25 @@ function http_get($url, $headers = array()) {
         return false;
     }
 }
+
+// 不安全的获取 IP 方式，在开启CDN的时候，如果被人猜到真实 IP，则可以伪造。
+function server_ip() {
+	global $conf;
+	$ip = '127.0.0.1';
+	if(empty($conf['cdn_on'])) {
+		$ip = $_SERVER['REMOTE_ADDR'];
+	} else {
+		if(isset($_SERVER['HTTP_CDN_SRC_IP'])) {
+			$ip = $_SERVER['HTTP_CDN_SRC_IP'];
+		} elseif(isset($_SERVER['HTTP_CLIENT_IP'])) {
+			$ip = $_SERVER['HTTP_CLIENT_IP'];
+		} elseif(isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+			$ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+			$arr = array_filter(explode(',', $ip));
+			$ip = end($arr);
+		} else {
+			$ip = $_SERVER['REMOTE_ADDR'];
+		}
+	}
+	return long2ip(ip2long($ip));
+}
