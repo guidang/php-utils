@@ -49,65 +49,75 @@ function file_exists_error($filePath) {
     }
 }
 
-//HTTP json数据请求函数      
-function http_post_data($url, $data_string) {
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_POST, 1);
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);//设置等待时间
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);//要求结果为字符串且输出到屏幕上
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            'Content-Type: application/json; charset=utf-8',
-            'Content-Length: ' . strlen($data_string))
-    );
-    $result = curl_exec($ch);
-    return $result;
-}
-
-/**
- * $params 要签名的参数(array / string)
- * $filter 过滤的参数键名 array,
- * $mv     键值为空的值是否移除 BOOL
- * $sort   排序 (1 键名)
- * $return 返回数组值 TRUE, 默认不返回 FALSE
- */
-function sign_encode($params, $filter = array(), $mv = TRUE, $sort = 1, $return = FALSE) {
-    $tmp = array();
-    if (is_string($params)) {
-        parse_str($params, $tmp);
-
-        empty($tmp) || $params = $tmp;
-    }
-
-    if (empty($params) || !is_array($params)) {
-        return '';
-    }
-
-    $result = array();
-    foreach ($params as $key => $value) {
-        if (in_array($key, $filter)) {
-            continue;
-        }
-
-        if ($mv && $value === '') {
-            continue;
-        }
-
-        $result[$key] = urldecode($value);
-    }
-
-    switch ($sort) {
-        case 1:
-            ksort($result);
-            break;
-    }
-
-    if ($return) {
+if (! function_exists('http_post_data')) {
+    /**
+     * HTTP json数据请求函数
+     * @param $url
+     * @param $data_string
+     * @return mixed
+     */
+    function http_post_data($url, $data_string) {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);//设置等待时间
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);//要求结果为字符串且输出到屏幕上
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                'Content-Type: application/json; charset=utf-8',
+                'Content-Length: ' . strlen($data_string))
+        );
+        $result = curl_exec($ch);
         return $result;
     }
+}
 
-    return urldecode(http_build_query($result));
+if (! function_exists('sign_encode')) {
+    /**
+     * $params 要签名的参数(array / string)
+     * $filter 过滤的参数键名 array,
+     * $mv     键值为空的值是否移除 BOOL
+     * $sort   排序 (1 键名)
+     * $return 返回数组值 TRUE, 默认不返回 FALSE
+     */
+    function sign_encode($params, $filter = array(), $mv = TRUE, $sort = 1, $return = FALSE) {
+        $tmp = array();
+        if (is_string($params)) {
+            parse_str($params, $tmp);
+
+            empty($tmp) || $params = $tmp;
+        }
+
+        if (empty($params) || !is_array($params)) {
+            return '';
+        }
+
+        $result = array();
+        foreach ($params as $key => $value) {
+            if (in_array($key, $filter)) {
+                continue;
+            }
+
+            if ($mv && $value === '') {
+                continue;
+            }
+
+            $result[$key] = urldecode($value);
+        }
+
+        switch ($sort) {
+            case 1:
+                ksort($result);
+                break;
+        }
+
+        if ($return) {
+            return $result;
+        }
+
+        return urldecode(http_build_query($result));
+    }
+
 }
 
 /**
@@ -645,22 +655,16 @@ function http_get($url, $headers = array()) {
 
 // 不安全的获取 IP 方式，在开启CDN的时候，如果被人猜到真实 IP，则可以伪造。
 function server_ip() {
-	global $conf;
-	$ip = '127.0.0.1';
-	if(empty($conf['cdn_on'])) {
-		$ip = $_SERVER['REMOTE_ADDR'];
-	} else {
-		if(isset($_SERVER['HTTP_CDN_SRC_IP'])) {
-			$ip = $_SERVER['HTTP_CDN_SRC_IP'];
-		} elseif(isset($_SERVER['HTTP_CLIENT_IP'])) {
-			$ip = $_SERVER['HTTP_CLIENT_IP'];
-		} elseif(isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-			$ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-			$arr = array_filter(explode(',', $ip));
-			$ip = end($arr);
-		} else {
-			$ip = $_SERVER['REMOTE_ADDR'];
-		}
-	}
-	return long2ip(ip2long($ip));
+    if(isset($_SERVER['HTTP_CDN_SRC_IP'])) {
+        $ip = $_SERVER['HTTP_CDN_SRC_IP'];
+    } elseif(isset($_SERVER['HTTP_CLIENT_IP'])) {
+        $ip = $_SERVER['HTTP_CLIENT_IP'];
+    } elseif(isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        $arr = array_filter(explode(',', $ip));
+        $ip = end($arr);
+    } else {
+        $ip = $_SERVER['REMOTE_ADDR'];
+    }
+    return long2ip(ip2long($ip));
 }
