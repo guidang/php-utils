@@ -1,10 +1,11 @@
 <?php
 
 /**
- * TEXT 格式转数组
+ * POSTMAN Bulk Edit 转 Array 数组
  */
  
 $content = isset($_POST['content']) ? $_POST['content'] : '';
+$filp = isset($_POST['flip']) ? (string)$_POST['flip'] : ':';
 $bulk_data = array();
 $error = 0;
 //echo $content;exit;
@@ -13,17 +14,20 @@ if (! empty($content)) {
 		$error = 1;
 	} else {
 		$error = 2;
-		//var_dump($content);
-		$data_arr = explode("\r\n", $content);
-		//var_export($data_arr);
-		$bulk_data = $data_arr;
+		$arr = explode("\r\n", $content);
+		foreach ($arr as $key => $value) {
+			$arr2 = explode($filp, $value);
+			if (count($arr2) == 2) {
+				$bulk_data[$arr2[0]] = $arr2[1];
+			}
+		}
 	}
 }
 ?>
 <!doctype html>
 <html>
 <head>
-<title>TEXT格式数据 转 Array数组格式</title>
+<title>POSTMAN Bulk Edit 转 Array数组格式</title>
 <style>
 label,
 button {
@@ -42,10 +46,13 @@ button {
 <body>
 <div class='container'> 
 	<form method='POST'>
-	<label for='content'>TEXT格式数据</label>
-	<textarea name='content' cols='80' rows='5' placeholder="aaaa
-bbbb
-cccc" required><?php echo $content; ?></textarea>
+	<label for='content'>分隔符</label>
+	<select name='flip'>
+		<option value=':'>:</option>
+		<option value='='>=</option>
+	</select>
+	<label for='content'>POSTMAN Bulk Edit</label>
+	<textarea name='content' cols='80' rows='5' required><?php echo $content; ?></textarea>
 	<button>提交</button>
 	</form> 
 	<?php if ($error == 2) {?>
@@ -54,9 +61,8 @@ cccc" required><?php echo $content; ?></textarea>
 		<pre><?php var_export($bulk_data); ?></pre>
 	<div>
 	<?php } else if ($error == 1) { ?>
-	<div class='tips'>TEXT数据格式有误</div>
+	<div class='tips'>POSTMAN Bulk Edit 数据格式有误</div>
 	<?php } ?>
 </div>
 </body>
 <html>
- 

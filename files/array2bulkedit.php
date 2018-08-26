@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Array 数据 转 POSTMAN Bulk Edit
+ * Array 数组 转 POSTMAN Bulk Edit
  */
  
 $content = isset($_POST['content']) ? $_POST['content'] : '';
