@@ -85,11 +85,13 @@ if (!function_exists('http_post_data')) {
 
 if (!function_exists('sign_encode')) {
     /**
+     * 签名
      * $params 要签名的参数(array / string)
      * $filter 过滤的参数键名 array,
      * $mv     键值为空的值是否移除 BOOL
      * $sort   排序 (1 键名)
      * $return 返回数组值 TRUE, 默认不返回 FALSE
+     * @return array|string
      */
     function sign_encode($params, $filter = array(), $mv = TRUE, $sort = 1, $return = FALSE) {
         $tmp = array();
@@ -737,5 +739,35 @@ if (!function_exists('server_ip')) {
             $ip = $_SERVER['REMOTE_ADDR'];
         }
         return long2ip(ip2long($ip));
+    }
+}
+
+if (!function_exists('client_ip')) {
+    /**
+     * 获取客户端IP
+     * @return array|false|string
+     */
+    function client_ip() {
+        //判断服务器是否允许$_SERVER
+        if (isset($_SERVER)) {
+            if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+                $realip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+            } elseif (isset($_SERVER['HTTP_CLIENT_IP'])) {
+                $realip = $_SERVER['HTTP_CLIENT_IP'];
+            } else {
+                $realip = $_SERVER['REMOTE_ADDR'];
+            }
+        } else {
+            //不允许就使用getenv获取
+            if (getenv('HTTP_X_FORWARDED_FOR')) {
+                $realip = getenv('HTTP_X_FORWARDED_FOR');
+            } elseif (getenv('HTTP_CLIENT_IP')) {
+                $realip = getenv('HTTP_CLIENT_IP');
+            } else {
+                $realip = getenv('REMOTE_ADDR');
+            }
+        }
+
+        return $realip;
     }
 }
