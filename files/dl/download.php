@@ -9,6 +9,7 @@ $time = (int)$_REQUEST['time'] ?: 5;
 
 $is_saved = false;
 $error_msg = '';
+$domain = $_SERVER['REQUEST_SCHEME'] . '//' . $_SERVER['HTTP_HOST'] . '/';
 
 if (! filter_var($url, FILTER_VALIDATE_URL)) {
 	$error_msg = 'URL格式错误';
@@ -72,6 +73,7 @@ $msg = [
 if ($is_saved) {
 	$msg['code'] 	= 0;
 	$msg['message'] = '下载成功';
+	$msg['url'] = $domain . 'files/' . $filename;
 }
 
 if ($msg['code'] !== 0) {
