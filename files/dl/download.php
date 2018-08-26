@@ -73,7 +73,7 @@ $msg = [
 if ($is_saved) {
 	$msg['code'] 	= 0;
 	$msg['message'] = '下载成功';
-	$msg['url'] = $domain . 'files/' . $filename;
+	$msg['data']['url'] = $domain . 'files/' . $filename;
 }
 
 if ($msg['code'] !== 0) {
