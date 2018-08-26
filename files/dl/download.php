@@ -9,7 +9,7 @@ $time = (int)$_REQUEST['time'] ?: 5;
 
 $is_saved = false;
 $error_msg = '';
-$domain = $_SERVER['REQUEST_SCHEME'] . '//' . $_SERVER['HTTP_HOST'] . '/';
+$domain = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . '/';
 
 if (! filter_var($url, FILTER_VALIDATE_URL)) {
 	$error_msg = 'URL格式错误';
