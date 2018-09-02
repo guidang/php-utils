@@ -38,9 +38,9 @@ if (!function_exists('get')) {
 
 
 if (!function_exists('post_get')) {
-    function post_get($key) {
-        return isset($_POST[$key]) ? $_POST[$key] :
-            (isset($_GET[$key]) ? $_GET[$key] : '');
+    function post_get($key = '') {
+        return post($key) ? post($key) :
+            (get($key) ? get($key) : '');
     }
 }
 
@@ -310,7 +310,11 @@ if (!function_exists('getSignContentUrlencode')) {
 
 if (!function_exists('debugLog')) {
     /**
-     * 全新的DEBUG工具
+     * 全新的 DEBUG LOG 工具
+     * @param $param
+     * @param bool $clear
+     * @param string $logname 请求参数 ('request', 'pay', 'sign', 'test') 或 'debug,abc'方式
+     * @return bool
      */
     function debugLog($param, $clear = false, $logname = "request") {
         if (defined("DEBUG") && DEBUG === false) {
@@ -321,16 +325,20 @@ if (!function_exists('debugLog')) {
 
         is_string($param) || $param = var_export($param, TRUE);
 
-        $logpath = $logname;
+        $log_path = $logname;
         if (in_array($logname, array('request', 'pay', 'sign', 'test')) ||
             strstr($logname, 'request') || strstr($logname, 'pay') || strstr($logname, 'sign') || strstr($logname, 'test')) {
-            $logpath = APP_ROOT_PATH . "logs/" . date('Y-m-d') . '_' . $logname . ".log";
+            $log_path = APP_ROOT_PATH . "logs/" . date('Y-m-d') . '_' . $logname . ".log";
+        } else if (strstr($logname, 'debug')) {
+            $paths = explode(',', $logname);
+            (count($paths) < 2) && $paths[1] = 'debug';
+            $log_path = APP_ROOT_PATH . "logs/" . $paths[1] . '_' . date('Y-m-d') . ".log";
         }
-
+//        var_dump($log_path);
         if ($clear) {
-            file_put_contents($logpath, date('Y-m-d H:i:s') . ":\r\n" . $param);
+            file_put_contents($log_path, date('Y-m-d H:i:s') . ":\r\n" . $param);
         } else {
-            file_put_contents($logpath, "\r\n" . date('Y-m-d H:i:s') . ":\r\n" . $param . "\r\n\r\n", FILE_APPEND);
+            file_put_contents($log_path, "\r\n" . date('Y-m-d H:i:s') . ":\r\n" . $param . "\r\n\r\n", FILE_APPEND);
         }
     }
 }
@@ -353,23 +361,26 @@ if (!function_exists('paylog')) {
                 is_string($param) || $param = var_export($param, TRUE);
                 break;
 
-            //发货请求参数
+            //订单创建请求参数
             case 2:
                 $log_path = sprintf($log_path, 'request');
                 is_string($param) || $param = var_export($param, TRUE);
                 break;
 
-            //发货请求结果
+            //订单创建请求结果
             case 3:
                 $log_path = sprintf($log_path, 'response');
-                $result = "未知";
-                if ($param['result'] == 'failure') {
-                    $result = '发货失败';
-                } else if ($param['result'] == 'success') {
-                    $result = '发货成功';
-                }
+                is_string($param) || $param = var_export($param, TRUE);
+                break;
 
-                $param = "状态:{$result}, 订单号:{$param['notice_sn']}, 金额:{$param['amount']}元, user_id:{$param['user_id']}";
+            //订单创建请求结果
+            case -1:
+                $paths = explode(',', $chan);
+                (count($paths) < 2) && $paths[1] = 'debug';
+
+                $log_path = APP_ROOT_PATH . "paylogs/{$paths[0]}_%s.log";
+                $log_path = sprintf($log_path, $paths[1]);
+                is_string($param) || $param = var_export($param, TRUE);
                 break;
 
             default:
@@ -557,7 +568,8 @@ if (!function_exists('rand_number')) {
 if (!function_exists('str_json_encode')) {
     /**
      * api不支持中文转义的json结构
-     * @param array $arr
+     * @param $arr
+     * @return string
      */
     function str_json_encode($arr) {
         if (count($arr) == 0) return "[]";
@@ -616,7 +628,7 @@ if (!function_exists('http_post')) {
      * @param array $headers 用户头部信息
      * @param boolean $post_file 是否文件上传
      * @param array $use_cert 用户证书 (数组或字符串)
-     * @param string $second 超时时间
+     * @param int $second 超时时间
      * @return string content
      */
     function http_post($url, $param, $headers = array(), $post_file = false, $use_cert = array(), $second = 30) {
@@ -769,5 +781,184 @@ if (!function_exists('client_ip')) {
         }
 
         return $realip;
+    }
+}
+
+if (!function_exists('string_in_array')) {
+    /**
+     * 搜索字符串是否包含在数组中的值里
+     * @param $str 搜索或被搜 的字符串
+     * @param $arr 数组(或二维数组) 如 array('aa', 'a1' => 'bb') 或 array(array('aa1', 'a1' => 'bb'), array('aa2', 'a1' => 'bb'))
+     * @param string $key a1
+     * @param bool $multi 是否为二维数组
+     * @param bool $direction 是从 str 搜索 arr,还是反过来
+     * @return bool
+     */
+    function string_in_array($str, $arr, $key = '', $multi = false, $direction = true) {
+        if (empty($str) || empty($arr)) {
+            return false;
+        }
+
+        if ($multi) {
+            foreach ($arr as $k => $v) {
+                if (!is_array($v)) {
+                    continue;
+                }
+
+                $res = string_in_array($str, $v, $key, false);
+                if ($res) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        if (!empty($key)) {
+            if (empty($arr[$key])) {
+                return false;
+            }
+
+            if ($direction) {
+                if (strstr($arr[$key], $str)) {
+                    return true;
+                }
+            } else {
+                if (strstr($str, $arr[$key])) {
+                    return true;
+                }
+            }
+        }
+
+        foreach ($arr as $k => $v) {
+            if (!empty($key)) {
+                if (!isset($v[$key])) {
+                    continue;
+                }
+                $v = $v[$key];
+            }
+            if ($direction) {
+                if (strstr($v, $str)) {
+                    return true;
+                }
+            } else {
+                if (strstr($str, $v)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+}
+
+
+if (!function_exists('create_captcha')) {
+    function create_captcha($word, $params = array()) {
+        header("Expires: " . date(DATE_RFC822));
+        header("Cache-Control: no-cache, must-revalidate");
+        header("Pragma: no-cache");
+        header("Content-type: image/png");
+
+        srand((double)microtime() * 1000000);
+
+        $defaults = array(
+            'img_width' => 50,
+            'img_height' => 20,
+            'font_size' => 5,
+            'font_path' => '',
+            'colors' => array(
+                'black' => array(226, 100, 76),
+                'text' => array(255, 255, 255),
+                'gray' => array(200, 200, 200),
+                'border' => array(153, 102, 102),
+            )
+        );
+
+        foreach ($defaults as $key => $val) {
+            if (!is_array($params) && empty($$key)) {
+                $$key = $val;
+            } else {
+                $$key = isset($params[$key]) ? $params[$key] : $val;
+            }
+        }
+
+        $im = imagecreate($img_width, $img_height);
+
+        is_array($colors) || $colors = $defaults['colors'];
+
+        foreach (array_keys($defaults['colors']) as $key) {
+            is_array($colors[$key]) || $colors[$key] = $defaults['colors'][$key];
+            $colors[$key] = ImageColorAllocate($im, $colors[$key][0], $colors[$key][1], $colors[$key][2]);
+        }
+
+        imagefill($im, $img_width, $img_height, $colors['gray']);
+
+        $length = strlen($word);
+        $angle = ($length >= 6) ? mt_rand(-($length - 6), ($length - 6)) : 0;
+        $x_axis = mt_rand(6, (360 / $length) - 16);
+        $y_axis = ($angle >= 0) ? mt_rand($img_height, $img_width) : mt_rand(6, $img_height);
+
+        $theta = 1;
+        $thetac = 7;
+        $radius = 16;
+        $circles = 20;
+        $points = 32;
+
+        for ($i = 0, $cp = ($circles * $points) - 1; $i < $cp; $i++) {
+            $theta += $thetac;
+            $rad = $radius * ($i / $points);
+            $x = ($rad * cos($theta)) + $x_axis;
+            $y = ($rad * sin($theta)) + $y_axis;
+            $theta += $thetac;
+            $rad1 = $radius * (($i + 1) / $points);
+            $x1 = ($rad1 * cos($theta)) + $x_axis;
+            $y1 = ($rad1 * sin($theta)) + $y_axis;
+            imageline($im, $x, $y, $x1, $y1, $colors['gray']);
+            $theta -= $thetac;
+        }
+
+        $use_font = ($font_path !== '' && file_exists($font_path) && function_exists('imagettftext'));
+        if ($use_font === FALSE) {
+            if ($font_size > 5 && $img_height <= 20) {
+                $font_size = 5;
+            }
+
+            if ($font_size <= 5) {
+                $x = 5;
+            } else {
+                $x = mt_rand(0, $img_width / $length);
+            }
+        } else {
+            ($font_size > 30) && $font_size = 30;
+            $x = mt_rand(0, $img_width / ($length / 1.5));
+        }
+
+        $text_width = $img_width / ($length + 1);
+        for ($i = 0; $i < $length; $i++) {
+            if ($use_font === FALSE) {
+                if ($font_size <= 5) {
+                    $y = mt_rand(0, $img_height / 2 - 5);
+                } else {
+                    $y = mt_rand(0, $img_height / 2);
+                }
+                imagestring($im, $font_size, $x, $y, $word[$i], $colors['text']);
+                $x += mt_rand($text_width, ($text_width + $font_size / $img_height));
+            } else {
+                $y = mt_rand($img_height / 2, $img_height - 3);
+                imagettftext($im, $font_size, $angle, $x, $y, $colors['text'], $font_path, $word[$i]);
+                $x += $font_size;
+            }
+        }
+
+//        imagestring($im, $font_size, 8, 2, $word, $colors['text']);
+
+        imagerectangle($im, 0, 0, $img_width - 1, $img_height - 1, $colors['border']);
+
+        for ($i = 0; $i < 90; $i++) {
+            imagesetpixel($im, rand() % 70, rand() % 30, $colors['gray']);
+        }
+        ImagePNG($im);
+        ImageDestroy($im);
     }
 }
