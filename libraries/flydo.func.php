@@ -854,6 +854,11 @@ if (!function_exists('string_in_array')) {
 
 
 if (!function_exists('create_captcha')) {
+    /**
+     * 创建验证码
+     * @param $word 字符串
+     * @param array $params 配置参数
+     */
     function create_captcha($word, $params = array()) {
         header("Expires: " . date(DATE_RFC822));
         header("Cache-Control: no-cache, must-revalidate");
@@ -960,5 +965,91 @@ if (!function_exists('create_captcha')) {
         }
         ImagePNG($im);
         ImageDestroy($im);
+    }
+
+    if (!function_exists('number_rmb')) {
+        /**
+         * 阿拉伯数字金额转中文金额大写
+         * @param $num
+         * @return string
+         */
+        function number_rmb($num) {
+            $cny = array('零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖');
+            $cny_ext = array('拾', '佰', '仟', '万', '亿');
+            $currency = array('圆', '角', '分', '整');
+
+            $cny_1 = array('圆', '万', '亿', '万');
+            $cny_2 = array('拾', '佰', '仟');
+
+            $number = array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+
+            $number_str = number_format($num, 2, '.', '');
+            $number_arr = explode('.', $number_str);
+            $v = str_replace($number, $cny, $num);
+
+            $real_val = '';
+
+            //整数部分
+            if ($number_arr[0] > 0) {
+                $integer_arr = str_split(strrev($number_arr[0]), 4);
+
+                $max_key = count($integer_arr) - 1;
+                foreach ($integer_arr as $key => $value) {
+                    $str = '';
+
+                    $value = str_pad(strrev($value), 4, "0", STR_PAD_LEFT);
+
+                    $str .= $value[3];
+                    if ($value[2] != 0) {
+                        $str = $value[2] . $cny_2[0] . $str;
+                    } else {
+                        $str = '0' . $str;
+                    }
+
+                    if ($value[1] != 0) {
+                        $str = $value[1] . $cny_2[1] . $str;
+                    } else {
+                        $str = '0' . $str;
+                    }
+
+                    if ($value[0] != 0) {
+                        $str = $value[0] . $cny_2[2] . $str;
+                    } else {
+                        $str = '0' . $str;
+                    }
+
+                    if ($max_key == $key) {
+                        $str = ltrim($str, "0");
+                    }
+
+                    $str = str_replace($number, $cny, $str);
+
+                    if ($value[3] > 0) {
+                        $str = str_replace('零零零', '零', $str);
+                        $str = str_replace('零零', '零', $str);
+                    } else {
+                        $str = rtrim($str, "零");
+                        $str = str_replace('零零零', '', $str);
+                    }
+
+                    $real_val = $str . $cny_1[$key] . $real_val;
+                }
+            }
+
+            //小数部分
+            if ($number_arr[1] == 0) {
+                $real_val .= $currency[3];
+            } else if ($number_arr[1] < 10) {
+                $real_val .= str_replace($number, $cny, $number_arr[1]) . $currency[2];
+            } else {
+                $real_val .= str_replace($number, $cny, $number_arr[1][0]) . $currency[1];
+
+                if ($number_arr[1][1] > 0) {
+                    $real_val .= str_replace($number, $cny, $number_arr[1][1]) . $currency[2];
+                }
+            }
+
+            return $real_val;
+        }
     }
 }
