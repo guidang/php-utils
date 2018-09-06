@@ -314,9 +314,10 @@ if (!function_exists('debugLog')) {
      * @param $param
      * @param bool $clear
      * @param string $logname 请求参数 ('request', 'pay', 'sign', 'test') 或 'debug,abc'方式
+     * @param bool $date 是否添加日期作为文件名
      * @return bool
      */
-    function debugLog($param, $clear = false, $logname = "request") {
+    function debugLog($param, $clear = false, $logname = "request", $date = true) {
         if (defined("DEBUG") && DEBUG === false) {
             return false;
         }
@@ -328,11 +329,15 @@ if (!function_exists('debugLog')) {
         $log_path = $logname;
         if (in_array($logname, array('request', 'pay', 'sign', 'test')) ||
             strstr($logname, 'request') || strstr($logname, 'pay') || strstr($logname, 'sign') || strstr($logname, 'test')) {
-            $log_path = APP_ROOT_PATH . "logs/" . date('Y-m-d') . '_' . $logname . ".log";
+
+            $date_str = $date ? date('Y-m-d') . '_' : '';
+            $log_path = APP_ROOT_PATH . "logs/" . $date_str . $logname . ".log";
         } else if (strstr($logname, 'debug')) {
             $paths = explode(',', $logname);
             (count($paths) < 2) && $paths[1] = 'debug';
-            $log_path = APP_ROOT_PATH . "logs/" . $paths[1] . '_' . date('Y-m-d') . ".log";
+
+            $date_str = $date ? '_' . date('Y-m-d') : '';
+            $log_path = APP_ROOT_PATH . "logs/" . $paths[1] . $date_str . ".log";
         }
 //        var_dump($log_path);
         if ($clear) {
