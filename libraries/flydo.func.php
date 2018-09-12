@@ -86,11 +86,11 @@ if (!function_exists('http_post_data')) {
 if (!function_exists('sign_encode')) {
     /**
      * 签名
-     * $params 要签名的参数(array / string)
-     * $filter 过滤的参数键名 array,
-     * $mv     键值为空的值是否移除 BOOL
-     * $sort   排序 (1 键名)
-     * $return 返回数组值 TRUE, 默认不返回 FALSE
+     * @param $params 要签名的参数(array / string)
+     * @param array $filter 过滤的参数键名 array,
+     * @param bool $mv 键值为空的值是否移除 BOOL
+     * @param int $sort 排序 (1 键名)
+     * @param bool $return
      * @return array|string
      */
     function sign_encode($params, $filter = array(), $mv = TRUE, $sort = 1, $return = FALSE) {
@@ -149,8 +149,6 @@ if (!function_exists('characet')) {
                 //$data = iconv($fileType, $targetCharset.'//IGNORE', $data);
             }
         }
-
-
         return $data;
     }
 }
@@ -158,9 +156,9 @@ if (!function_exists('characet')) {
 if (!function_exists('checkEmpty')) {
     /**
      * 校验$value是否非空
-     *  if not set ,return true;
-     *    if is null , return true;
-     **/
+     * @param $value
+     * @return bool
+     */
     function checkEmpty($value) {
         if (!isset($value))
             return true;
@@ -174,7 +172,8 @@ if (!function_exists('checkEmpty')) {
 }
 
 if (!function_exists('formatPubKey')) {
-    /**格式化公钥
+    /**
+     * 格式化公钥
      * $pubKey PKCS#1格式的公钥串
      * return pem格式公钥， 可以保存为.pem文件
      */
@@ -191,7 +190,8 @@ if (!function_exists('formatPubKey')) {
 }
 
 if (!function_exists('formatPriKey')) {
-    /**格式化公钥
+    /**
+     * 格式化公钥
      * $priKey PKCS#1格式的私钥串
      * return pem格式私钥， 可以保存为.pem文件
      */
@@ -256,6 +256,11 @@ if (!function_exists('verify')) {
 }
 
 if (!function_exists('getSignContent')) {
+    /**
+     * @param $params
+     * @param string $postCharset
+     * @return string
+     */
     function getSignContent($params, $postCharset = "UTF-8") {
         ksort($params);
 
@@ -282,7 +287,12 @@ if (!function_exists('getSignContent')) {
 }
 
 if (!function_exists('getSignContentUrlencode')) {
-//此方法对value做urlencode
+    /**
+     * 此方法对value做urlencode
+     * @param $params
+     * @param string $postCharset
+     * @return string
+     */
     function getSignContentUrlencode($params, $postCharset = "UTF-8") {
         ksort($params);
 
@@ -351,6 +361,9 @@ if (!function_exists('debugLog')) {
 if (!function_exists('paylog')) {
     /**
      * 支付日志
+     * @param $param
+     * @param $chan
+     * @param $type
      */
     function paylog($param, $chan, $type) {
         defined("APP_ROOT_PATH") || define('APP_ROOT_PATH', dirname(__DIR__) . DIRECTORY_SEPARATOR);
@@ -634,9 +647,10 @@ if (!function_exists('http_post')) {
      * @param boolean $post_file 是否文件上传
      * @param array $use_cert 用户证书 (数组或字符串)
      * @param int $second 超时时间
-     * @return string content
+     * @param bool $status 是否返回请求状态信息
+     * @return bool|mixed
      */
-    function http_post($url, $param, $headers = array(), $post_file = false, $use_cert = array(), $second = 30) {
+    function http_post($url, $param, $headers = array(), $post_file = false, $use_cert = array(), $second = 30, $status = false) {
         $oCurl = curl_init();
         //设置超时
         curl_setopt($oCurl, CURLOPT_TIMEOUT, $second);
@@ -705,6 +719,11 @@ if (!function_exists('http_post')) {
         $sContent = curl_exec($oCurl);
         $aStatus = curl_getinfo($oCurl);
         curl_close($oCurl);
+
+        if ($status) {
+            return $aStatus;
+        }
+
         if (intval($aStatus["http_code"]) == 200) {
             return $sContent;
         } else {
@@ -718,9 +737,10 @@ if (!function_exists('http_get')) {
      * GET 请求
      * @param string $url 链接
      * @param array $headers 用户头部信息
-     * @return string content
+     * @param bool $status 是否返回状态信息
+     * @return bool|mixed
      */
-    function http_get($url, $headers = array()) {
+    function http_get($url, $headers = array(), $status = false) {
         $oCurl = curl_init();
         if (stripos($url, "https://") !== FALSE) {
             curl_setopt($oCurl, CURLOPT_SSL_VERIFYPEER, FALSE);
@@ -733,6 +753,12 @@ if (!function_exists('http_get')) {
         $sContent = curl_exec($oCurl);
         $aStatus = curl_getinfo($oCurl);
         curl_close($oCurl);
+
+
+        if ($status) {
+            return $aStatus;
+        }
+
         if (intval($aStatus["http_code"]) == 200) {
             return $sContent;
         } else {
@@ -742,7 +768,10 @@ if (!function_exists('http_get')) {
 }
 
 if (!function_exists('server_ip')) {
-// 不安全的获取 IP 方式，在开启CDN的时候，如果被人猜到真实 IP，则可以伪造。
+    /**
+     * 不安全的获取 IP 方式，在开启CDN的时候，如果被人猜到真实 IP，则可以伪造。
+     * @return string
+     */
     function server_ip() {
         if (isset($_SERVER['HTTP_CDN_SRC_IP'])) {
             $ip = $_SERVER['HTTP_CDN_SRC_IP'];
