@@ -1087,3 +1087,20 @@ if (!function_exists('create_captcha')) {
         }
     }
 }
+
+if (!function_exists('urltolower')) {
+    /**
+     * 将URL中的域名及协议转小写
+     * @param $url
+     * @return bool|mixed
+     */
+    function urltolower($url) {
+        if (!filter_var($url, FILTER_VALIDATE_URL)) {
+            return $url;
+        }
+        $parse_url_arr = parse_url($url);
+        $pre_url = $parse_url_arr['scheme'] . '://' . $parse_url_arr['host'];
+        $real_url = str_replace($pre_url, strtolower($pre_url), $url);
+        return $real_url;
+    }
+}
