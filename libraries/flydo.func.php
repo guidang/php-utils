@@ -171,13 +171,13 @@ if (!function_exists('checkEmpty')) {
     }
 }
 
-if (!function_exists('formatPubKey')) {
+if (!function_exists('format_publickey')) {
     /**
      * 格式化公钥
      * $pubKey PKCS#1格式的公钥串
      * return pem格式公钥， 可以保存为.pem文件
      */
-    function formatPubKey($pubKey) {
+    function format_publickey($pubKey) {
         $fKey = "-----BEGIN PUBLIC KEY-----\n";
         $len = strlen($pubKey);
         for ($i = 0; $i < $len;) {
@@ -189,13 +189,13 @@ if (!function_exists('formatPubKey')) {
     }
 }
 
-if (!function_exists('formatPriKey')) {
+if (!function_exists('format_privatekey')) {
     /**
      * 格式化公钥
-     * $priKey PKCS#1格式的私钥串
-     * return pem格式私钥， 可以保存为.pem文件
+     * @param $priKey PKCS#1格式的私钥串
+     * @return string pem格式私钥， 可以保存为.pem文件
      */
-    function formatPriKey($priKey) {
+    function format_privatekey($priKey) {
         $fKey = "-----BEGIN RSA PRIVATE KEY-----\n";
         $len = strlen($priKey);
         for ($i = 0; $i < $len;) {
@@ -208,20 +208,19 @@ if (!function_exists('formatPriKey')) {
 }
 
 if (!function_exists('sign')) {
-    /**RSA签名
-     * $data待签名数据
-     * $priKey商户私钥
-     * 签名用商户私钥
-     * 使用MD5摘要算法
-     * 最后的签名，需要用base64编码
-     * return Sign签名
+    /**
+     * RSA签名
+     * @param $data 数据
+     * @param $priKey 私钥
+     * @param int $alg 加密方式
+     * @return string
      */
-    function sign($data, $priKey) {
+    function sign($data, $priKey, $alg = OPENSSL_ALGO_MD5) {
         //转换为openssl密钥
         $res = openssl_get_privatekey($priKey);
 
         //调用openssl内置签名方法，生成签名$sign
-        openssl_sign($data, $sign, $res, OPENSSL_ALGO_MD5);
+        openssl_sign($data, $sign, $res, $alg);
 
         //释放资源
         openssl_free_key($res);
