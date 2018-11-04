@@ -86,11 +86,11 @@ if (!function_exists('http_post_data')) {
 if (!function_exists('sign_encode')) {
     /**
      * 签名
-     * $params 要签名的参数(array / string)
-     * $filter 过滤的参数键名 array,
-     * $mv     键值为空的值是否移除 BOOL
-     * $sort   排序 (1 键名)
-     * $return 返回数组值 TRUE, 默认不返回 FALSE
+     * @param $params 要签名的参数(array / string)
+     * @param array $filter 过滤的参数键名 array,
+     * @param bool $mv 键值为空的值是否移除 BOOL
+     * @param int $sort 排序 (1 键名)
+     * @param bool $return
      * @return array|string
      */
     function sign_encode($params, $filter = array(), $mv = TRUE, $sort = 1, $return = FALSE) {
@@ -115,7 +115,7 @@ if (!function_exists('sign_encode')) {
                 continue;
             }
 
-            $result[$key] = urldecode($value);
+            $result[$key] = urlencode($value);
         }
 
         switch ($sort) {
@@ -149,8 +149,6 @@ if (!function_exists('characet')) {
                 //$data = iconv($fileType, $targetCharset.'//IGNORE', $data);
             }
         }
-
-
         return $data;
     }
 }
@@ -158,9 +156,9 @@ if (!function_exists('characet')) {
 if (!function_exists('checkEmpty')) {
     /**
      * 校验$value是否非空
-     *  if not set ,return true;
-     *    if is null , return true;
-     **/
+     * @param $value
+     * @return bool
+     */
     function checkEmpty($value) {
         if (!isset($value))
             return true;
@@ -173,12 +171,13 @@ if (!function_exists('checkEmpty')) {
     }
 }
 
-if (!function_exists('formatPubKey')) {
-    /**格式化公钥
+if (!function_exists('format_publickey')) {
+    /**
+     * 格式化公钥
      * $pubKey PKCS#1格式的公钥串
      * return pem格式公钥， 可以保存为.pem文件
      */
-    function formatPubKey($pubKey) {
+    function format_publickey($pubKey) {
         $fKey = "-----BEGIN PUBLIC KEY-----\n";
         $len = strlen($pubKey);
         for ($i = 0; $i < $len;) {
@@ -190,12 +189,13 @@ if (!function_exists('formatPubKey')) {
     }
 }
 
-if (!function_exists('formatPriKey')) {
-    /**格式化公钥
-     * $priKey PKCS#1格式的私钥串
-     * return pem格式私钥， 可以保存为.pem文件
+if (!function_exists('format_privatekey')) {
+    /**
+     * 格式化公钥
+     * @param $priKey PKCS#1格式的私钥串
+     * @return string pem格式私钥， 可以保存为.pem文件
      */
-    function formatPriKey($priKey) {
+    function format_privatekey($priKey) {
         $fKey = "-----BEGIN RSA PRIVATE KEY-----\n";
         $len = strlen($priKey);
         for ($i = 0; $i < $len;) {
@@ -208,20 +208,19 @@ if (!function_exists('formatPriKey')) {
 }
 
 if (!function_exists('sign')) {
-    /**RSA签名
-     * $data待签名数据
-     * $priKey商户私钥
-     * 签名用商户私钥
-     * 使用MD5摘要算法
-     * 最后的签名，需要用base64编码
-     * return Sign签名
+    /**
+     * RSA签名
+     * @param $data 数据
+     * @param $priKey 私钥
+     * @param int $alg 加密方式
+     * @return string
      */
-    function sign($data, $priKey) {
+    function sign($data, $priKey, $alg = OPENSSL_ALGO_MD5) {
         //转换为openssl密钥
         $res = openssl_get_privatekey($priKey);
 
         //调用openssl内置签名方法，生成签名$sign
-        openssl_sign($data, $sign, $res, OPENSSL_ALGO_MD5);
+        openssl_sign($data, $sign, $res, $alg);
 
         //释放资源
         openssl_free_key($res);
@@ -233,19 +232,19 @@ if (!function_exists('sign')) {
 }
 
 if (!function_exists('verify')) {
-    /**RSA验签
-     * $data待签名数据
-     * $sign需要验签的签名
-     * $pubKey爱贝公钥
-     * 验签用爱贝公钥，摘要算法为MD5
-     * return 验签是否通过 bool值
+    /**
+     * RSA验签
+     * @param $data 数据
+     * @param $sign
+     * @param $pubKey 公钥
+     * @return bool
      */
-    function verify($data, $sign, $pubKey) {
+    function verify($data, $sign, $pubKey, $alg = OPENSSL_ALGO_MD5) {
         //转换为openssl格式密钥
         $res = openssl_get_publickey($pubKey);
 
         //调用openssl内置方法验签，返回bool值
-        $result = (bool)openssl_verify($data, base64_decode($sign), $res, OPENSSL_ALGO_MD5);
+        $result = (bool)openssl_verify($data, base64_decode($sign), $res, $alg);
 
         //释放资源
         openssl_free_key($res);
@@ -256,6 +255,11 @@ if (!function_exists('verify')) {
 }
 
 if (!function_exists('getSignContent')) {
+    /**
+     * @param $params
+     * @param string $postCharset
+     * @return string
+     */
     function getSignContent($params, $postCharset = "UTF-8") {
         ksort($params);
 
@@ -282,7 +286,12 @@ if (!function_exists('getSignContent')) {
 }
 
 if (!function_exists('getSignContentUrlencode')) {
-//此方法对value做urlencode
+    /**
+     * 此方法对value做urlencode
+     * @param $params
+     * @param string $postCharset
+     * @return string
+     */
     function getSignContentUrlencode($params, $postCharset = "UTF-8") {
         ksort($params);
 
@@ -314,25 +323,30 @@ if (!function_exists('debugLog')) {
      * @param $param
      * @param bool $clear
      * @param string $logname 请求参数 ('request', 'pay', 'sign', 'test') 或 'debug,abc'方式
+     * @param bool $date 是否添加日期作为文件名
      * @return bool
      */
-    function debugLog($param, $clear = false, $logname = "request") {
+    function debugLog($param, $clear = false, $logname = "request", $date = true) {
         if (defined("DEBUG") && DEBUG === false) {
             return false;
         }
 
-        defined("APP_ROOT_PATH") || define('APP_ROOT_PATH', dirname(__DIR__) . DIRECTORY_SEPARATOR);
+        defined("LOG_PATH") || define('LOG_PATH', dirname(__DIR__) . DIRECTORY_SEPARATOR);
 
         is_string($param) || $param = var_export($param, TRUE);
 
         $log_path = $logname;
         if (in_array($logname, array('request', 'pay', 'sign', 'test')) ||
             strstr($logname, 'request') || strstr($logname, 'pay') || strstr($logname, 'sign') || strstr($logname, 'test')) {
-            $log_path = APP_ROOT_PATH . "logs/" . date('Y-m-d') . '_' . $logname . ".log";
+
+            $date_str = $date ? date('Y-m-d') . '_' : '';
+            $log_path = LOG_PATH . "logs/" . $date_str . $logname . ".log";
         } else if (strstr($logname, 'debug')) {
             $paths = explode(',', $logname);
             (count($paths) < 2) && $paths[1] = 'debug';
-            $log_path = APP_ROOT_PATH . "logs/" . $paths[1] . '_' . date('Y-m-d') . ".log";
+
+            $date_str = $date ? '_' . date('Y-m-d') : '';
+            $log_path = LOG_PATH . "logs/" . $paths[1] . $date_str . ".log";
         }
 //        var_dump($log_path);
         if ($clear) {
@@ -346,10 +360,13 @@ if (!function_exists('debugLog')) {
 if (!function_exists('paylog')) {
     /**
      * 支付日志
+     * @param $param
+     * @param $chan
+     * @param $type
      */
     function paylog($param, $chan, $type) {
-        defined("APP_ROOT_PATH") || define('APP_ROOT_PATH', dirname(__DIR__) . DIRECTORY_SEPARATOR);
-        $log_path = APP_ROOT_PATH . "paylogs/{$chan}_%s.log";
+        defined("PAYLOG_PATH") || define('PAYLOG_PATH', dirname(__DIR__) . DIRECTORY_SEPARATOR);
+        $log_path = PAYLOG_PATH . "paylogs/{$chan}_%s.log";
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
             $log_path = "E:\pay_tmp_logs\{$chan}_%s.log";
         }
@@ -412,17 +429,18 @@ if (!function_exists('buildRequestForm')) {
      * @param $url 转跳页面
      * @param $para_temp 请求参数数组
      * @return 提交表单HTML文本
+     * @param bool $encode 是否编码
      * @return string
      */
-    function buildRequestForm($url, $para_temp) {
+    function buildRequestForm($url, $para_temp, $encode = true) {
 
         $sHtml = "<form id='jssubmit' name='htmlsubmit' action='" . $url . "' method='POST'>";
         foreach ($para_temp as $key => $val) {
             if (false === checkEmpty($val)) {
-                //$val = $this->characet($val, $this->postCharset);
-                $val = str_replace("'", "&apos;", $val);
-                //$val = str_replace("\"","&quot;",$val);
-                $sHtml .= "<input type='hidden' name='" . $key . "' value='" . $val . "'/>";
+                if ($encode) {
+                    $val = urlencode($val);
+                }
+                $sHtml .= "<input type='hidden' name='{$key}' value='{$val}' />";
             }
         }
 
@@ -629,9 +647,10 @@ if (!function_exists('http_post')) {
      * @param boolean $post_file 是否文件上传
      * @param array $use_cert 用户证书 (数组或字符串)
      * @param int $second 超时时间
-     * @return string content
+     * @param bool $status 是否返回请求状态信息
+     * @return bool|mixed
      */
-    function http_post($url, $param, $headers = array(), $post_file = false, $use_cert = array(), $second = 30) {
+    function http_post($url, $param, $headers = array(), $post_file = false, $use_cert = array(), $second = 30, $status = false) {
         $oCurl = curl_init();
         //设置超时
         curl_setopt($oCurl, CURLOPT_TIMEOUT, $second);
@@ -700,6 +719,11 @@ if (!function_exists('http_post')) {
         $sContent = curl_exec($oCurl);
         $aStatus = curl_getinfo($oCurl);
         curl_close($oCurl);
+
+        if ($status) {
+            return $aStatus;
+        }
+
         if (intval($aStatus["http_code"]) == 200) {
             return $sContent;
         } else {
@@ -713,9 +737,10 @@ if (!function_exists('http_get')) {
      * GET 请求
      * @param string $url 链接
      * @param array $headers 用户头部信息
-     * @return string content
+     * @param bool $status 是否返回状态信息
+     * @return bool|mixed
      */
-    function http_get($url, $headers = array()) {
+    function http_get($url, $headers = array(), $status = false) {
         $oCurl = curl_init();
         if (stripos($url, "https://") !== FALSE) {
             curl_setopt($oCurl, CURLOPT_SSL_VERIFYPEER, FALSE);
@@ -728,6 +753,12 @@ if (!function_exists('http_get')) {
         $sContent = curl_exec($oCurl);
         $aStatus = curl_getinfo($oCurl);
         curl_close($oCurl);
+
+
+        if ($status) {
+            return $aStatus;
+        }
+
         if (intval($aStatus["http_code"]) == 200) {
             return $sContent;
         } else {
@@ -737,7 +768,10 @@ if (!function_exists('http_get')) {
 }
 
 if (!function_exists('server_ip')) {
-// 不安全的获取 IP 方式，在开启CDN的时候，如果被人猜到真实 IP，则可以伪造。
+    /**
+     * 不安全的获取 IP 方式，在开启CDN的时候，如果被人猜到真实 IP，则可以伪造。
+     * @return string
+     */
     function server_ip() {
         if (isset($_SERVER['HTTP_CDN_SRC_IP'])) {
             $ip = $_SERVER['HTTP_CDN_SRC_IP'];
@@ -854,6 +888,11 @@ if (!function_exists('string_in_array')) {
 
 
 if (!function_exists('create_captcha')) {
+    /**
+     * 创建验证码
+     * @param $word 字符串
+     * @param array $params 配置参数
+     */
     function create_captcha($word, $params = array()) {
         header("Expires: " . date(DATE_RFC822));
         header("Cache-Control: no-cache, must-revalidate");
@@ -960,5 +999,226 @@ if (!function_exists('create_captcha')) {
         }
         ImagePNG($im);
         ImageDestroy($im);
+    }
+
+    if (!function_exists('number_rmb')) {
+        /**
+         * 阿拉伯数字金额转中文金额大写
+         * @param $num
+         * @return string
+         */
+        function number_rmb($num) {
+            $cny = array('零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖');
+            $cny_ext = array('拾', '佰', '仟', '万', '亿');
+            $currency = array('圆', '角', '分', '整');
+
+            $cny_1 = array('圆', '万', '亿', '万');
+            $cny_2 = array('拾', '佰', '仟');
+
+            $number = array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+
+            $number_str = number_format($num, 2, '.', '');
+            $number_arr = explode('.', $number_str);
+            $v = str_replace($number, $cny, $num);
+
+            $real_val = '';
+
+            //整数部分
+            if ($number_arr[0] > 0) {
+                $integer_arr = str_split(strrev($number_arr[0]), 4);
+
+                $max_key = count($integer_arr) - 1;
+                foreach ($integer_arr as $key => $value) {
+                    $str = '';
+
+                    $value = str_pad(strrev($value), 4, "0", STR_PAD_LEFT);
+
+                    $str .= $value[3];
+                    if ($value[2] != 0) {
+                        $str = $value[2] . $cny_2[0] . $str;
+                    } else {
+                        $str = '0' . $str;
+                    }
+
+                    if ($value[1] != 0) {
+                        $str = $value[1] . $cny_2[1] . $str;
+                    } else {
+                        $str = '0' . $str;
+                    }
+
+                    if ($value[0] != 0) {
+                        $str = $value[0] . $cny_2[2] . $str;
+                    } else {
+                        $str = '0' . $str;
+                    }
+
+                    if ($max_key == $key) {
+                        $str = ltrim($str, "0");
+                    }
+
+                    $str = str_replace($number, $cny, $str);
+
+                    if ($value[3] > 0) {
+                        $str = str_replace('零零零', '零', $str);
+                        $str = str_replace('零零', '零', $str);
+                    } else {
+                        $str = rtrim($str, "零");
+                        $str = str_replace('零零零', '', $str);
+                    }
+
+                    $real_val = $str . $cny_1[$key] . $real_val;
+                }
+            }
+
+            //小数部分
+            if ($number_arr[1] == 0) {
+                $real_val .= $currency[3];
+            } else if ($number_arr[1] < 10) {
+                $real_val .= str_replace($number, $cny, $number_arr[1]) . $currency[2];
+            } else {
+                $real_val .= str_replace($number, $cny, $number_arr[1][0]) . $currency[1];
+
+                if ($number_arr[1][1] > 0) {
+                    $real_val .= str_replace($number, $cny, $number_arr[1][1]) . $currency[2];
+                }
+            }
+
+            return $real_val;
+        }
+    }
+}
+
+if (!function_exists('urltolower')) {
+    /**
+     * 将URL中的域名及协议转小写
+     * @param $url
+     * @return bool|mixed
+     */
+    function urltolower($url) {
+        if (!filter_var($url, FILTER_VALIDATE_URL)) {
+            return $url;
+        }
+        $parse_url_arr = parse_url($url);
+        $pre_url = $parse_url_arr['scheme'] . '://' . $parse_url_arr['host'];
+        $real_url = str_replace($pre_url, strtolower($pre_url), $url);
+        return $real_url;
+    }
+}
+
+if (!function_exists('mcrypt_decrypt')) {
+    /**
+     * PHP 7.2 + 支持 mcrypt
+     * @param $cipher
+     * @param $key
+     * @param $data
+     * @param $mode
+     * @param $iv
+     * @return string
+     */
+    function mcrypt_decrypt($cipher, $key , $data , $mode, $iv) {
+        $method = mcrypt_method($cipher, $mode);
+        $result = openssl_decrypt(base64_encode($data), $method, $key, 0, $iv);
+        return $result;
+    }
+}
+
+if (! function_exists('mcrypt_encrypt')) {
+
+    /**
+     * 支持PHP7.2 mcrypt_encrypt
+     * @param $cipher
+     * @param $key
+     * @param $data
+     * @param $mode
+     * @param $iv
+     * @return bool|string
+     */
+    function mcrypt_encrypt($cipher, $key, $data, $mode, $iv) {
+        $method = mcrypt_method($cipher, $mode);
+        return base64_decode(openssl_encrypt($data, $method, $key, 0, $iv));
+    }
+}
+
+if (! function_exists('mcrypt_module_close')) {
+    /**
+     * 加密常量
+     */
+    function mcrypt_module_close() {
+        define ('MCRYPT_ENCRYPT', 0);
+        define ('MCRYPT_DECRYPT', 1);
+        define ('MCRYPT_DEV_RANDOM', 0);
+        define ('MCRYPT_DEV_URANDOM', 1);
+        define ('MCRYPT_RAND', 2);
+        define ('MCRYPT_3DES', "tripledes");
+        define ('MCRYPT_ARCFOUR_IV', "arcfour-iv");
+        define ('MCRYPT_ARCFOUR', "arcfour");
+        define ('MCRYPT_BLOWFISH', "blowfish");
+        define ('MCRYPT_BLOWFISH_COMPAT', "blowfish-compat");
+        define ('MCRYPT_CAST_128', "cast-128");
+        define ('MCRYPT_CAST_256', "cast-256");
+        define ('MCRYPT_CRYPT', "crypt");
+        define ('MCRYPT_DES', "des");
+        define ('MCRYPT_ENIGNA', "crypt");
+        define ('MCRYPT_GOST', "gost");
+        define ('MCRYPT_LOKI97', "loki97");
+        define ('MCRYPT_PANAMA', "panama");
+        define ('MCRYPT_RC2', "rc2");
+        define ('MCRYPT_RIJNDAEL_128', "rijndael-128");
+        define ('MCRYPT_RIJNDAEL_192', "rijndael-192");
+        define ('MCRYPT_RIJNDAEL_256', "rijndael-256");
+        define ('MCRYPT_SAFER64', "safer-sk64");
+        define ('MCRYPT_SAFER128', "safer-sk128");
+        define ('MCRYPT_SAFERPLUS', "saferplus");
+        define ('MCRYPT_SERPENT', "serpent");
+        define ('MCRYPT_THREEWAY', "threeway");
+        define ('MCRYPT_TRIPLEDES', "tripledes");
+        define ('MCRYPT_TWOFISH', "twofish");
+        define ('MCRYPT_WAKE', "wake");
+        define ('MCRYPT_XTEA', "xtea");
+        define ('MCRYPT_IDEA', "idea");
+        define ('MCRYPT_MARS', "mars");
+        define ('MCRYPT_RC6', "rc6");
+        define ('MCRYPT_SKIPJACK', "skipjack");
+        define ('MCRYPT_MODE_CBC', "cbc");
+        define ('MCRYPT_MODE_CFB', "cfb");
+        define ('MCRYPT_MODE_ECB', "ecb");
+        define ('MCRYPT_MODE_NOFB', "nofb");
+        define ('MCRYPT_MODE_OFB', "ofb");
+        define ('MCRYPT_MODE_STREAM', "stream");
+    }
+
+    mcrypt_module_close();
+}
+
+if (! function_exists('mcrypt_method')) {
+
+    /**
+     * 加密方式
+     * @param $cipher
+     * @param $mode
+     * @return string
+     */
+    function mcrypt_method($cipher, $mode) {
+        $method = '';
+        switch ($cipher) {
+            case MCRYPT_BLOWFISH:
+                $method .= 'bf-';
+                break;
+
+            case MCRYPT_RIJNDAEL_128:
+                $method .= 'aes-128-';
+                break;
+
+            case MCRYPT_RIJNDAEL_192:
+                $method .= 'aes-192-';
+                break;
+
+            case MCRYPT_RIJNDAEL_256:
+                $method .= 'aes-256-';
+                break;
+        }
+
+        $method = strtoupper($method . $mode);
+        return $method;
     }
 }
