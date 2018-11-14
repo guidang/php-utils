@@ -91,9 +91,10 @@ if (!function_exists('sign_encode')) {
      * @param bool $mv 键值为空的值是否移除 BOOL
      * @param int $sort 排序 (1 键名)
      * @param bool $return
+     * @param bool $encode 是否encode编码值
      * @return array|string
      */
-    function sign_encode($params, $filter = array(), $mv = TRUE, $sort = 1, $return = FALSE) {
+    function sign_encode($params, $filter = array(), $mv = TRUE, $sort = 1, $return = FALSE, $encode = FALSE) {
         $tmp = array();
         if (is_string($params)) {
             parse_str($params, $tmp);
@@ -115,7 +116,7 @@ if (!function_exists('sign_encode')) {
                 continue;
             }
 
-            $result[$key] = urlencode($value);
+            $result[$key] = $encode ? urlencode($value) : $value;
         }
 
         switch ($sort) {
@@ -1115,7 +1116,7 @@ if (!function_exists('mcrypt_decrypt')) {
      * @param $iv
      * @return string
      */
-    function mcrypt_decrypt($cipher, $key , $data , $mode, $iv) {
+    function mcrypt_decrypt($cipher, $key , $data , $mode, $iv = '') {
         $method = mcrypt_method($cipher, $mode);
         $result = openssl_decrypt(base64_encode($data), $method, $key, 0, $iv);
         return $result;
