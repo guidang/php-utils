@@ -409,18 +409,34 @@ if (!function_exists('paylog')) {
     }
 }
 
-if (!function_exists('xml2Array')) {
+if (!function_exists('xml2array')) {
     /**
      * 将XML转为Array
      * @param $xml
      * @return mixed
      */
-    function xml2Array($xml) {
+    function xml2array($xml) {
         //将XML转为array
         //禁止引用外部xml实体
         libxml_disable_entity_loader(true);
         $result = json_decode(json_encode(simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA)), true);
         return $result;
+    }
+}
+
+if (!function_exists('array2xml')) {
+    /**
+     * 将数组转为XML
+     * @param $array
+     * @return string
+     */
+    function array2xml($array) {
+        $xml = '<xml>';
+        foreach ($array as $k => $v) {
+            $xml .= '<' . $k . '><![CDATA[' . $v . ']]></' . $k . '>';
+        }
+        $xml .= '</xml>';
+        return $xml;
     }
 }
 
