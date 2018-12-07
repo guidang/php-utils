@@ -5,7 +5,7 @@
  * @author: Skiychan <dev@skiy.net>
  */
 
-date_default_timezone_set('Asia/Shanghai'); //'Asia/Shanghai'   亚洲/上海 
+date_default_timezone_set('Asia/Shanghai'); //'Asia/Shanghai'   亚洲/上海
 
 if (!function_exists('post')) {
     function post($key = '') {
@@ -931,6 +931,8 @@ if (!function_exists('create_captcha')) {
             )
         );
 
+        $img_width = $img_height = $colors = $font_path = $font_size = '';
+
         foreach ($defaults as $key => $val) {
             if (!is_array($params) && empty($$key)) {
                 $$key = $val;
@@ -1132,14 +1134,14 @@ if (!function_exists('mcrypt_decrypt')) {
      * @param $iv
      * @return string
      */
-    function mcrypt_decrypt($cipher, $key , $data , $mode, $iv = '') {
+    function mcrypt_decrypt($cipher, $key, $data, $mode, $iv = '') {
         $method = mcrypt_method($cipher, $mode);
         $result = openssl_decrypt(base64_encode($data), $method, $key, 0, $iv);
         return $result;
     }
 }
 
-if (! function_exists('mcrypt_encrypt')) {
+if (!function_exists('mcrypt_encrypt')) {
 
     /**
      * 支持PHP7.2 mcrypt_encrypt
@@ -1156,58 +1158,58 @@ if (! function_exists('mcrypt_encrypt')) {
     }
 }
 
-if (! function_exists('mcrypt_module_close')) {
+if (!function_exists('mcrypt_module_close')) {
     /**
      * 加密常量
      */
     function mcrypt_module_close() {
-        define ('MCRYPT_ENCRYPT', 0);
-        define ('MCRYPT_DECRYPT', 1);
-        define ('MCRYPT_DEV_RANDOM', 0);
-        define ('MCRYPT_DEV_URANDOM', 1);
-        define ('MCRYPT_RAND', 2);
-        define ('MCRYPT_3DES', "tripledes");
-        define ('MCRYPT_ARCFOUR_IV', "arcfour-iv");
-        define ('MCRYPT_ARCFOUR', "arcfour");
-        define ('MCRYPT_BLOWFISH', "blowfish");
-        define ('MCRYPT_BLOWFISH_COMPAT', "blowfish-compat");
-        define ('MCRYPT_CAST_128', "cast-128");
-        define ('MCRYPT_CAST_256', "cast-256");
-        define ('MCRYPT_CRYPT', "crypt");
-        define ('MCRYPT_DES', "des");
-        define ('MCRYPT_ENIGNA', "crypt");
-        define ('MCRYPT_GOST', "gost");
-        define ('MCRYPT_LOKI97', "loki97");
-        define ('MCRYPT_PANAMA', "panama");
-        define ('MCRYPT_RC2', "rc2");
-        define ('MCRYPT_RIJNDAEL_128', "rijndael-128");
-        define ('MCRYPT_RIJNDAEL_192', "rijndael-192");
-        define ('MCRYPT_RIJNDAEL_256', "rijndael-256");
-        define ('MCRYPT_SAFER64', "safer-sk64");
-        define ('MCRYPT_SAFER128', "safer-sk128");
-        define ('MCRYPT_SAFERPLUS', "saferplus");
-        define ('MCRYPT_SERPENT', "serpent");
-        define ('MCRYPT_THREEWAY', "threeway");
-        define ('MCRYPT_TRIPLEDES', "tripledes");
-        define ('MCRYPT_TWOFISH', "twofish");
-        define ('MCRYPT_WAKE', "wake");
-        define ('MCRYPT_XTEA', "xtea");
-        define ('MCRYPT_IDEA', "idea");
-        define ('MCRYPT_MARS', "mars");
-        define ('MCRYPT_RC6', "rc6");
-        define ('MCRYPT_SKIPJACK', "skipjack");
-        define ('MCRYPT_MODE_CBC', "cbc");
-        define ('MCRYPT_MODE_CFB', "cfb");
-        define ('MCRYPT_MODE_ECB', "ecb");
-        define ('MCRYPT_MODE_NOFB', "nofb");
-        define ('MCRYPT_MODE_OFB', "ofb");
-        define ('MCRYPT_MODE_STREAM', "stream");
+        define('MCRYPT_ENCRYPT', 0);
+        define('MCRYPT_DECRYPT', 1);
+        define('MCRYPT_DEV_RANDOM', 0);
+        define('MCRYPT_DEV_URANDOM', 1);
+        define('MCRYPT_RAND', 2);
+        define('MCRYPT_3DES', "tripledes");
+        define('MCRYPT_ARCFOUR_IV', "arcfour-iv");
+        define('MCRYPT_ARCFOUR', "arcfour");
+        define('MCRYPT_BLOWFISH', "blowfish");
+        define('MCRYPT_BLOWFISH_COMPAT', "blowfish-compat");
+        define('MCRYPT_CAST_128', "cast-128");
+        define('MCRYPT_CAST_256', "cast-256");
+        define('MCRYPT_CRYPT', "crypt");
+        define('MCRYPT_DES', "des");
+        define('MCRYPT_ENIGNA', "crypt");
+        define('MCRYPT_GOST', "gost");
+        define('MCRYPT_LOKI97', "loki97");
+        define('MCRYPT_PANAMA', "panama");
+        define('MCRYPT_RC2', "rc2");
+        define('MCRYPT_RIJNDAEL_128', "rijndael-128");
+        define('MCRYPT_RIJNDAEL_192', "rijndael-192");
+        define('MCRYPT_RIJNDAEL_256', "rijndael-256");
+        define('MCRYPT_SAFER64', "safer-sk64");
+        define('MCRYPT_SAFER128', "safer-sk128");
+        define('MCRYPT_SAFERPLUS', "saferplus");
+        define('MCRYPT_SERPENT', "serpent");
+        define('MCRYPT_THREEWAY', "threeway");
+        define('MCRYPT_TRIPLEDES', "tripledes");
+        define('MCRYPT_TWOFISH', "twofish");
+        define('MCRYPT_WAKE', "wake");
+        define('MCRYPT_XTEA', "xtea");
+        define('MCRYPT_IDEA', "idea");
+        define('MCRYPT_MARS', "mars");
+        define('MCRYPT_RC6', "rc6");
+        define('MCRYPT_SKIPJACK', "skipjack");
+        define('MCRYPT_MODE_CBC', "cbc");
+        define('MCRYPT_MODE_CFB', "cfb");
+        define('MCRYPT_MODE_ECB', "ecb");
+        define('MCRYPT_MODE_NOFB', "nofb");
+        define('MCRYPT_MODE_OFB', "ofb");
+        define('MCRYPT_MODE_STREAM', "stream");
     }
 
     mcrypt_module_close();
 }
 
-if (! function_exists('mcrypt_method')) {
+if (!function_exists('mcrypt_method')) {
 
     /**
      * 加密方式
@@ -1237,5 +1239,65 @@ if (! function_exists('mcrypt_method')) {
 
         $method = strtoupper($method . $mode);
         return $method;
+    }
+}
+
+if (!function_exists('str_cut2arr')) {
+
+    /**
+     * @param $str 字符串
+     * @param $filter_len 长度切割,
+     * @param $fill_str 前面补位字符
+     * @param $mix_len 最小字符串长度 (不足则前面补位)
+     * @return array
+     */
+    function str_cut2arr($str, $filter_len = 1, $fill_str = '', $mix_len = 0) {
+        $len = strlen($str);
+        $pre_len = $len % $filter_len;
+        $str_len = $len / $filter_len;
+        if (strlen($fill_str) > 0) {
+            $new_len = 0;
+            //无最大长度,则按分割分度进行补位
+            if ($mix_len == 0) {
+                if ($pre_len != 0) {
+                    // $new_len = ($str_len + 1) * $filter_len;
+                    $new_len = $len + $filter_len - $pre_len;
+                }
+            } else if ($mix_len > 0) {
+                ($mix_len >= $len) && $new_len = $mix_len;
+            }
+            //新的长度
+            if ($new_len > 0) {
+                $str = str_pad($str, $new_len, $fill_str, STR_PAD_LEFT);
+                $len = strlen($str);
+                $pre_len = $len % $filter_len;
+                $str_len = $len / $filter_len;
+            }
+        }
+        $arr = [];
+        if ($pre_len > 0) {
+            $arr[] = substr($str, 0, $pre_len);
+        }
+        $lastlen = $len - $pre_len;
+
+        if ($lastlen > 0) {
+            $last = substr($str, $pre_len, $lastlen);
+
+            //方式一
+            /*
+            $new_arr = [];
+            $count = $lastlen / $filter_len;
+            for ($i = 0; $i < $count; $i++) {
+                $max_offset = $i * $filter_len;
+                $new_arr[] = substr($last, $max_offset, $filter_len);
+            }
+            */
+            //方式二
+            $new_arr = str_split($last, $filter_len);
+            if (!empty($new_arr)) {
+                $arr = array_merge($arr, $new_arr);
+            }
+        }
+        return $arr;
     }
 }
