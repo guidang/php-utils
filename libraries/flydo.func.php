@@ -1301,3 +1301,15 @@ if (!function_exists('str_cut2arr')) {
         return $arr;
     }
 }
+
+if (!function_exists('arr2dword')) {
+    /**
+     * 数组转DWORD
+     * @param $arr
+     * @return int
+     */
+    function arr2dword($arr) {
+        $dword = (($arr[3] & 0xFF) << 24) | (($arr[2] & 0xFF) << 16) | (($arr[1] & 0xFF) << 8) | ($arr[0] & 0xFF);
+        return $dword;
+    }
+}
