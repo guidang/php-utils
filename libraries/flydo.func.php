@@ -1313,3 +1313,31 @@ if (!function_exists('arr2dword')) {
         return $dword;
     }
 }
+
+if (!function_exists('substr_reverse')) {
+    /**
+     * 反向截取字符串
+     * @param $str
+     * @param int $start 倒数第几位(从0开始)
+     * @param int $length 取长度
+     * @return bool|string
+     */
+    function substr_reverse($str, $start = 0, $length = 1) {
+        $len = mb_strlen($str);
+
+        if (($length <= 0) || ($start < 0)) {
+            return false;
+        }
+
+        if ($start > ($len - 1)) {
+            return false;
+        }
+
+        $real_end = $len - $start;
+        $real_start = $real_end - $length;
+
+        ($real_start < 0) && $real_start = 0;
+
+        return substr($str, $real_start, $length);
+    }
+}
