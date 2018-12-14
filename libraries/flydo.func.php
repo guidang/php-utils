@@ -567,6 +567,9 @@ if (!function_exists('random_string')) {
                     case 'nozero':
                         $pool = '123456789';
                         break;
+                    case 'hex':
+                        $pool = '0123456789abcdefABCDEF';
+                        break;
                 }
                 return substr(str_shuffle(str_repeat($pool, ceil($len / strlen($pool)))), 0, $len);
             case 'unique': // todo: remove in 3.1+
