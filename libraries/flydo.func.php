@@ -554,6 +554,7 @@ if (!function_exists('random_string')) {
             case 'numeric':
             case 'nozero':
             case 'alpha':
+            case 'hex':
                 switch ($type) {
                     case 'alpha':
                         $pool = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
