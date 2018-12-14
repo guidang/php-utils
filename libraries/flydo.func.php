@@ -1340,4 +1340,29 @@ if (!function_exists('substr_reverse')) {
 
         return substr($str, $real_start, $length);
     }
+
+    if (!function_exists('hextostr')) {
+        /**
+         * 十六进制转中文
+         * @param $hex
+         * @param string $to_encoding 编码(默认GBK)
+         * @return string
+         */
+        function hextostr($hex, $to_encoding = 'gbk') {
+            $string = '';
+
+            if (strtolower($to_encoding) == 'gbk') {
+                for ($i = 0; $i < strlen($hex) - 1; $i += 2) {
+                    $string .= chr(hexdec($hex[$i] . $hex[$i + 1]));
+                }
+
+                $string = mb_convert_encoding($string, 'UTF-8', 'GBK');
+
+            } else {
+
+            }
+
+            return $string;
+        }
+    }
 }
