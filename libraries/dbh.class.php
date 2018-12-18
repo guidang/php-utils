@@ -8,6 +8,8 @@
  */
 
 class Dbh extends PDO {
+    public $type = 'mysql'; //数据库类型 mysql,pgsql(不支持反引号啊)
+
     public $cache;
     public $count = 0;
     public $last_query = '';
@@ -20,6 +22,13 @@ class Dbh extends PDO {
     public $pre = '';
 
     protected $sqlstr = '';
+
+    public function __construct(string $dsn, string $username = '', string $passwd = '', array $options = []) {
+        parent::__construct($dsn, $username, $passwd, $options);
+
+        $link = explode(':', $dsn);
+        $this->type = $link[0];
+    }
 
     /**
      * 获取所有数据
@@ -377,6 +386,10 @@ class Dbh extends PDO {
     protected function from($table) {
         $table = $this->pre . $table;
         $this->sqlstr .= "FROM `{$table}` ";
+
+        if ($this->type == 'pgsql') {
+            $this->sqlstr = str_replace('`', '',$this->sqlstr);
+        }
         return $this;
     }
 
@@ -411,7 +424,7 @@ class Dbh extends PDO {
             //bindParam 写法
             $place_holders = implode(',', $values);
 
-            $sql = sprintf("( %s ) VALUES ( %s )", implode(' , ', $keys), $place_holders);  
+            $sql = sprintf("( %s ) VALUES ( %s )", implode(' , ', $keys), $place_holders);
 //            var_dump($sql);
         }
 
@@ -678,6 +691,10 @@ class Dbh extends PDO {
      * @return string
      */
     protected function backquote($key) {
+        if ($this->type == 'pgsql') {
+            return $key;
+        }
+
         $key = str_replace('`', '', $key);
         if (strstr($key, '.')) {
             $key = '`' . str_replace('.', '`.`', $key) . '`';
