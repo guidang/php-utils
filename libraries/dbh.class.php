@@ -601,6 +601,7 @@ class Dbh extends PDO {
         if (defined('SQL_DEBUG') && SQL_DEBUG) {
             defined("LOGPATH") || define('LOGPATH', $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . 'logs/');
             file_put_contents(LOGPATH . "sql_insert.log", PHP_EOL . date('Y-m-d H:i:s') . PHP_EOL . $sql . PHP_EOL, FILE_APPEND);
+            file_put_contents(LOGPATH . "sql_insert.log", implode(',', array_values($data)) . PHP_EOL, FILE_APPEND);
         }
 
         try {
@@ -609,7 +610,6 @@ class Dbh extends PDO {
             $stmt = $this->prepare($sql);
 
             if (is_array($data)) {
-                file_put_contents(LOGPATH . "sql_insert.log", implode(',', array_values($data)) . PHP_EOL, FILE_APPEND);
                 // $values = array_values($data); //方式2写法1
                 $values = []; //方式2写法2
                 foreach ($data as $key => $value) {
