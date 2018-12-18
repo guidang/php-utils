@@ -665,7 +665,11 @@ class Dbh extends PDO {
         }
 
         $this->cache_key = '';
-        return CACHE_PRE . $key;
+
+        if (defined('CACHE_PRE')) {
+            return CACHE_PRE . $key;
+        }
+        return $key;
     }
 
     /**
@@ -801,6 +805,10 @@ class Dbh extends PDO {
      * 配置缓存
      */
     public function cache() {
+        if (! defined('CACHE')) {
+            return false;
+        }
+
         switch (CACHE) {
             case 'REDIS':
                 try {
