@@ -1369,4 +1369,47 @@ if (!function_exists('substr_reverse')) {
             return $string;
         }
     }
+
+    if (!function_exists('split_str')) {  
+        /**
+         * 拆分字符串为多维数组
+         * @param string $data 字符串
+         * @param string $pre_str 去除首字符串
+         * @param string $suf_str 去除尾字符串
+         * @param bool $clear 是否清除头和尾, 否则补回包头包尾
+         * @return array
+         */
+        function split_str(string $data, string $pre_str = '7e', string $suf_str = '7e', bool $clear = true) : array {
+            $pre_len = mb_strlen($pre_str);
+            $suf_len = mb_strlen($suf_str);
+
+            //去头
+            $prefix = mb_substr($data, 0, $pre_len);
+            $has_pre = ($prefix == $pre_str);
+
+            $fix_pre_start = 0;
+            if ($has_pre) {
+                $data = mb_substr($data, $pre_len);
+                $fix_pre_start = 0 - $pre_len;
+            }
+
+            //去尾
+            $suffix = mb_substr($data, $fix_pre_start, $suf_len);
+            $has_suf = ($suffix == $suf_str);
+            if ($has_suf) {
+                $data = mb_substr($data, 0, mb_strlen($data) - $suf_len);
+            }
+
+            $list = explode($pre_str . $suf_str, $data);
+            if ($clear) {
+                return $list;
+            }
+
+            $new_list = [];
+            foreach ($list as $l) {
+                $new_list[] = $pre_str . $l . $suf_str;
+            }
+            return $new_list;
+        }
+    }
 }
