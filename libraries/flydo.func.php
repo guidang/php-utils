@@ -1380,23 +1380,22 @@ if (!function_exists('substr_reverse')) {
          * @return array
          */
         function split_str(string $data, string $pre_str = '7e', string $suf_str = '7e', bool $clear = true) {
-            $pre_len = mb_strlen($pre_str);
-            $suf_len = mb_strlen($suf_str);
+            $pre_len = strlen($pre_str);
+            $suf_len = strlen($suf_str);
     
             //去头
-            $prefix = mb_substr($data, 0, $pre_len);
+            $prefix = substr($data, 0, $pre_len);
             $has_pre = ($prefix == $pre_str);
-    
             if ($has_pre) {
-                $data = mb_substr($data, $pre_len);
+                $data = substr($data, $pre_len);
             }
     
             //去尾
-            $fix_suf_start = 0 - mb_strlen($suf_str);
-            $suffix = mb_substr($data, $fix_suf_start, $suf_len);
+            $data_len = strlen($data);
+            $suffix = substr($data, $data_len - 1);
             $has_suf = ($suffix == $suf_str);
             if ($has_suf) {
-                $data = mb_substr($data, 0, mb_strlen($data) - $suf_len);
+                $data = substr($data, 0, strlen($data) - $suf_len);
             }
     
             $list = explode($pre_str . $suf_str, $data);
