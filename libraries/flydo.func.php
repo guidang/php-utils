@@ -1379,7 +1379,7 @@ if (!function_exists('substr_reverse')) {
          * @param bool $clear 是否清除头和尾, 否则补回包头包尾
          * @return array
          */
-        function split_str(string $data, string $pre_str = '7e', string $suf_str = '7e', bool $clear = true) : array {
+        function split_str(string $data, string $pre_str = '7e', string $suf_str = '7e', bool $clear = true) {
             $pre_len = mb_strlen($pre_str);
             $suf_len = mb_strlen($suf_str);
 
