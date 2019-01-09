@@ -1344,70 +1344,70 @@ if (!function_exists('substr_reverse')) {
 
         return substr($str, $real_start, $length);
     }
+}
 
-    if (!function_exists('hextostr')) {
-        /**
-         * 十六进制转中文
-         * @param $hex
-         * @param string $to_encoding 编码(默认GBK)
-         * @return string
-         */
-        function hextostr($hex, $to_encoding = 'gbk') {
-            $string = '';
+if (!function_exists('hextostr')) {
+    /**
+     * 十六进制转中文
+     * @param $hex
+     * @param string $to_encoding 编码(默认GBK)
+     * @return string
+     */
+    function hextostr($hex, $to_encoding = 'gbk') {
+        $string = '';
 
-            if (strtolower($to_encoding) == 'gbk') {
-                for ($i = 0; $i < strlen($hex) - 1; $i += 2) {
-                    $string .= chr(hexdec($hex[$i] . $hex[$i + 1]));
-                }
-
-                $string = mb_convert_encoding($string, 'UTF-8', 'GBK');
-
-            } else {
-
+        if (strtolower($to_encoding) == 'gbk') {
+            for ($i = 0; $i < strlen($hex) - 1; $i += 2) {
+                $string .= chr(hexdec($hex[$i] . $hex[$i + 1]));
             }
 
-            return $string;
+            $string = mb_convert_encoding($string, 'UTF-8', 'GBK');
+
+        } else {
+
         }
+
+        return $string;
     }
+}
 
-    if (!function_exists('split_str')) {  
-        /**
-         * 拆分字符串为多维数组
-         * @param string $data 字符串
-         * @param string $pre_str 去除首字符串
-         * @param string $suf_str 去除尾字符串
-         * @param bool $clear 是否清除头和尾, 否则补回包头包尾
-         * @return array
-         */
-        function split_str(string $data, string $pre_str = '7e', string $suf_str = '7e', bool $clear = true) {
-            $pre_len = strlen($pre_str);
-            $suf_len = strlen($suf_str);
-    
-            //去头
-            $prefix = substr($data, 0, $pre_len);
-            $has_pre = ($prefix == $pre_str);
-            if ($has_pre) {
-                $data = substr($data, $pre_len);
-            }
-    
-            //去尾
-            $data_len = strlen($data);
-            $suffix = substr($data, $data_len - 1);
-            $has_suf = ($suffix == $suf_str);
-            if ($has_suf) {
-                $data = substr($data, 0, strlen($data) - $suf_len);
-            }
-    
-            $list = explode($pre_str . $suf_str, $data);
-            if ($clear) {
-                return $list;
-            }
-    
-            $new_list = [];
-            foreach ($list as $l) {
-                $new_list[] = $pre_str . $l . $suf_str;
-            }
-            return $new_list;
+if (!function_exists('split_str')) {
+    /**
+     * 拆分字符串为多维数组
+     * @param string $data 字符串
+     * @param string $pre_str 去除首字符串
+     * @param string $suf_str 去除尾字符串
+     * @param bool $clear 是否清除头和尾, 否则补回包头包尾
+     * @return array
+     */
+    function split_str(string $data, string $pre_str = '7e', string $suf_str = '7e', bool $clear = true) {
+        $pre_len = strlen($pre_str);
+        $suf_len = strlen($suf_str);
+
+        //去头
+        $prefix = substr($data, 0, $pre_len);
+        $has_pre = ($prefix == $pre_str);
+        if ($has_pre) {
+            $data = substr($data, $pre_len);
         }
+
+        //去尾
+        $data_len = strlen($data);
+        $suffix = substr($data, $data_len - 1);
+        $has_suf = ($suffix == $suf_str);
+        if ($has_suf) {
+            $data = substr($data, 0, strlen($data) - $suf_len);
+        }
+
+        $list = explode($pre_str . $suf_str, $data);
+        if ($clear) {
+            return $list;
+        }
+
+        $new_list = [];
+        foreach ($list as $l) {
+            $new_list[] = $pre_str . $l . $suf_str;
+        }
+        return $new_list;
     }
 }
